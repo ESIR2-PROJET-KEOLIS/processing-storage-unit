@@ -38,7 +38,6 @@ public class OptimisationAndFormating {
             double lastPoint_lat = 0;
             double lastPont_long = 0;
 
-
             //  !!!! PARSE THE JSON TAB CONTAINING THE COORDS
 
             //if(input.charAt(input.length()-1) == ']') {

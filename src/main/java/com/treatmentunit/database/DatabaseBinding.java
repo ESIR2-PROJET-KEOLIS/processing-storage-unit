@@ -1,41 +1,52 @@
 package com.treatmentunit.database;
-
 import javax.xml.crypto.Data;
+import javax.xml.transform.Result;
 import java.sql.*;
+
+// DATABASE BINDING WITH "MYDB" ONLY !!
 
 public class DatabaseBinding {
 
     private static Connection con;
-    private static ResultSet result;
+    private ResultSet result;
+    private boolean requested;
     private static Statement statement;
 
-    public void connectToSqlSocket() {
+    public static void connectToSqlSocket() {
         try {
-            Class.forName("com.mysql.jbdc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://TODO", "USER", "PASSWD");
+            String host = "localhost";
+            int port = 6033;
+            String db_name = "mydb";
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            System.out.println("[*] Tentative de connexion à la base de données...");
+            con = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+db_name+"?useSSL=false&serverTimezone=UTC", "root", "root");
+            statement = con.createStatement();
+            System.out.println("[*] Connexion réussie à la base de données.");
+
+            //boolean let = statement.execute("INSERT INTO calendar_dates VALUES (0, 21/02/2022, 'test')");
+
         } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("[!] Erreur de connexion à la base de données.");
             throw new RuntimeException(e);
         }
     }
 
-    public static void main(String[] args) {
-        DatabaseBinding databaseBinding = new DatabaseBinding();
-        databaseBinding.connectToSqlSocket();
-    }
-
-    public static String request(String query) {
+    public void requestInsert(String query) {
         try {
-            result = statement.executeQuery(query);
-
+            requested = statement.execute(query);
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("/!\\ REQUÊTE SQL INCORRECTE /!\\ -> DatabaseBinding.java");
+            System.out.println("[!] Erreur lors de l'insertion dans la base de données.");
+            System.out.println("[!] Requête en cause : " + query);
         }
-        return null;
     }
 
-    public void close() {
+    public String requestFetch(String query) {
+        String fetched = "";
 
+        return fetched;
     }
+
+
 
 }
