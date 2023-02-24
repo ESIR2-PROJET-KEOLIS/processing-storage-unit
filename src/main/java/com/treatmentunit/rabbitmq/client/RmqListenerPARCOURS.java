@@ -54,11 +54,15 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
             StringBuilder coords_insert = new StringBuilder();
             if(message.startsWith("{")) {
 
+                // TODO -> Truncate specific tables on both listeners !
+                // TODO -> Metadata fetching function for API endpoints !
                 /**
                  *                     TRUNCATE ` Parcours des lignes de bus du RÃ©seau star`;
                  *                     TRUNCATE `Parcour_geo`;
                  *
                  */
+                databaseBinding.requestInsert("TRUNCATE parcours_lignes_bus_star");
+                databaseBinding.requestInsert("TRUNCATE parcours_geo");
 
                 JSONObject jsonObject = new JSONObject(message);
                 JSONArray jsonArray = jsonObject.getJSONArray("records");
@@ -98,6 +102,8 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
                 giga_insert = new StringBuilder();
                 coords_insert = new StringBuilder();
             }
+            System.out.println("[*] Data received on PARCOURS successfully processed.");
+
         };
 
         try {
