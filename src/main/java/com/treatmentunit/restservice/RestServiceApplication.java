@@ -2,6 +2,7 @@ package com.treatmentunit.restservice;
 
 import com.treatmentunit.database.DatabaseBinding;
 import com.treatmentunit.rabbitmq.client.RmqListenerGTFS;
+import com.treatmentunit.rabbitmq.client.RmqListenerPARCOURS;
 import com.treatmentunit.rabbitmq.client.RmqListenerPositionAllBus;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeoutException;
 public class RestServiceApplication {
 	public static RmqListenerPositionAllBus rmqListenerPositionAllBus = null;
 	public static RmqListenerGTFS rmqListenerGTFS = null;
+	public static RmqListenerPARCOURS rmqListenerPARCOURS = null;
 
 	public static void main(String[] args) throws IOException, TimeoutException {
 		SpringApplication.run(RestServiceApplication.class, args);
@@ -34,15 +36,18 @@ public class RestServiceApplication {
 		if(args.length == 1) {
 			rmqListenerPositionAllBus = new RmqListenerPositionAllBus(args[0]);
 			rmqListenerGTFS = new RmqListenerGTFS(args[0]);
+			rmqListenerPARCOURS = new RmqListenerPARCOURS(args[0]);
 		} else if(args.length == 3) {
 			rmqListenerPositionAllBus = new RmqListenerPositionAllBus(args[0], args[1], args[2]);
 			rmqListenerGTFS = new RmqListenerGTFS(args[0], args[1], args[2]);
+			rmqListenerPARCOURS = new RmqListenerPARCOURS(args[0], args[1], args[2]);
 		} else {
 			System.out.println("[!] Erreur : Nombre d'arguments incorrect !");
 			System.exit(0);
 		}
 		rmqListenerPositionAllBus.run();
 		rmqListenerGTFS.run();
+		rmqListenerPARCOURS.run();
 	}
 }
 

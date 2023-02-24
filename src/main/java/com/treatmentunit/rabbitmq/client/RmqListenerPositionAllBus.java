@@ -59,7 +59,7 @@ public class RmqListenerPositionAllBus extends RmqListener implements Runnable{
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             if(message.startsWith("{")) {
-                System.out.println("[*] Raw JSON data received. " );
+                System.out.println("[*] Raw JSON data received on " + QUEUE_NAME);
                 try {
                     rmqPublisher.PublishQueue(dataFormating.formatReceivedJSON(message), publisherChannel);
                     System.out.println("[*] JSON data formated and sent to " + host + " on queue " + rmqPublisher.getTargetQueue() + ".");

@@ -36,11 +36,7 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
 
     @Override
     public void run() {
-        try {
-            TimeUnit.SECONDS.sleep(30);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost(host);
         if(username != "" && password != "") {
@@ -71,11 +67,18 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
             System.out.println("[*] Archive " + FILE_NAME + " prête.");
             ZipExtractor zipExtractor = new ZipExtractor("GTFS.zip", FILE_NAME_DEZIP);
 
-            databaseBinding.requestFetch("""
-                    SET FOREIGN_KEY_CHECKS=0;\s
-                    SELECT CONCAT('TRUNCATE TABLE ', table_schema, '.', table_name, ';')
-                    FROM information_schema.tables
-                    WHERE table_schema = 'mydb';
+            databaseBinding.requestInsert("""
+                    TRUNCATE `agency`;
+                    TRUNCATE `calendar`;
+                    TRUNCATE `calendar_dates`;
+                    TRUNCATE `fare_attributes`;
+                    TRUNCATE `feed_info`;
+                    TRUNCATE `pictogram`;
+                    TRUNCATE `routes`;
+                    TRUNCATE `shapes`;
+                    TRUNCATE `stops`;
+                    TRUNCATE `stop_times`;
+                    TRUNCATE `trips`;
                     """);
 
             File folder = new File(FILE_NAME_DEZIP);
