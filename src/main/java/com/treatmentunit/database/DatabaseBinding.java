@@ -2,6 +2,7 @@ package com.treatmentunit.database;
 import javax.xml.crypto.Data;
 import javax.xml.transform.Result;
 import java.sql.*;
+import java.util.ArrayList;
 
 // DATABASE BINDING WITH "MYDB" ONLY !!
 
@@ -41,9 +42,17 @@ public class DatabaseBinding {
         }
     }
 
-    public String requestFetch(String query) {
-        String fetched = "";
+    public ArrayList<String> requestFetchSingleValue(String query) throws SQLException {
+        ArrayList<String> fetched = new ArrayList<>();
+        result = statement.executeQuery(query);
+        if(result.next()) {
+            ResultSetMetaData metadata = result.getMetaData();
+            int col_count = metadata.getColumnCount();
 
+            for(int i = 1 ; i <= metadata.getColumnCount() ; i++) {
+                fetched.add(result.getString(i));
+            }
+        }
         return fetched;
     }
 
