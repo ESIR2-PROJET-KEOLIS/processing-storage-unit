@@ -177,16 +177,14 @@ public class DataFormating {
                                 "type" : "Feature",
                                     "properties" : {
                                         "icon" : "bus",
-                                        "line" : \" """ + nom_bus + "\"" + """
+                                        "line" : \" """ + nom_bus + "\"" + ",\n"+ """
+                                        \t"nextindex" : \"""" + returned_splited[1] + "\",\n" + """
+                                        \t"sens" : \"""" + sens + "\"" + """ 
                                 \n\t},
                                 \t"geometry" : {
                                    \t"type" : "Point", 
                                    \t"coordinates" : [""" + longitude + ", " + latitude + "]\n" + """
-                                    },
-                                   \t"simulation" : {
-                                   \t"nextindex" : \"""" + returned_splited[1] + ",\n" + """                     
-                                   \t"sens" : \"""" + sens + "\"" + """ 
-                                   }
+                                    }
                                 }""";
 
                         FormatedStringContent += FormatedStringFeature;

@@ -95,8 +95,6 @@ public class OptimisationAndFormating {
         beg = beg.substring(0, beg.length() - 1);
         beg += "]";
 
-        //System.out.println("[*] Fetched coords: " + arrangedCoords.size());
-
         double nearest_point = 999999999;
         int idx_of_nearest_point = 0;
 
