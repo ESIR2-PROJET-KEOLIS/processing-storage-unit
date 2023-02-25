@@ -1,14 +1,19 @@
 package com.treatmentunit.formating;
 
 import com.fasterxml.jackson.databind.util.TypeKey;
+import com.treatmentunit.database.DatabaseBinding;
+import com.treatmentunit.restservice.APIController;
+import com.treatmentunit.simulation.OptimisationAndFormating;
 import org.apache.tomcat.util.json.JSONParser;
 import org.ietf.jgss.GSSContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +22,8 @@ import java.util.Objects;
 public class DataFormating {
 
     static HashMap<String, Integer> BusNumber = new HashMap<>();
+    private DatabaseBinding databaseBinding = new DatabaseBinding();
+    private OptimisationAndFormating optimisationAndFormating = new OptimisationAndFormating();
 
     // FormatedString Components
     public String FormatedStringHeader = """
@@ -62,7 +69,12 @@ public class DataFormating {
         String coordinates_parcours = parcours.getJSONArray("coordinates").toString();
         String coordinates_type = parcours.getString("type");
         String id = fields.getString("id");
-        String nom_arret_depart = fields.getString("nomarretdepart");
+        String nom_arret_depart;
+        if(fields.has("nomarretdepart")) {
+            nom_arret_depart = fields.getString("nomarretdepart");
+        } else {
+            nom_arret_depart = "0";
+        }
         String date_debut_version = fields.getString("datedebutversion");
         String id_arret_depart = fields.getString("idarretdepart");
         String est_accessible_pmr = fields.getString("estaccessiblepmr");
@@ -74,7 +86,12 @@ public class DataFormating {
             date_fin_version = "0";
         }
         String nom_court_ligne = fields.getString("nomcourtligne");
-        String nom_arret_arrivee = fields.getString("nomarretarrivee");
+        String nom_arret_arrivee;
+            if(fields.has("nomarretarrivee")) {
+                nom_arret_arrivee = fields.getString("nomarretarrivee");
+            } else {
+                nom_arret_arrivee = "0";
+            }
         String longueur = String.valueOf(fields.getDouble("longueur"));
         String couleur_trace = fields.getString("couleurtrace");
 
@@ -105,6 +122,8 @@ public class DataFormating {
         res.add(coordinates_parcours);
 
         } catch (JSONException e) {
+            System.out.println("STOOOOOOOOOOOOOOOOOOOOOOOOOOOP :::");
+            e.printStackTrace();
             System.out.println("[!] Erreur lors du traitement des données JSON !");
         }
 
@@ -112,7 +131,7 @@ public class DataFormating {
     }
 
 
-    public String formatReceivedJSON(String src) {
+    public String formatReceivedJSON(String src) throws SQLException, IOException {
         System.out.println("[*] Formatting ...");
 
         FormatedStringHeader = """
@@ -139,31 +158,45 @@ public class DataFormating {
                     if (!empty) {
                         FormatedStringContent += ",\n";
                     }
-                    String num_bus = array.getJSONObject(i).getJSONObject("fields").getString("nomcourtligne");
+                    String nom_bus = array.getJSONObject(i).getJSONObject("fields").getString("nomcourtligne");
                     JSONArray array_coords = array.getJSONObject(i).getJSONObject("fields").getJSONArray("coordonnees");
+                    String sens = String.valueOf(array.getJSONObject(i).getJSONObject("fields").getInt("sens"));
+
                     if (array_coords != null && array_coords.length() == 2) {
                         float longitude = array_coords.getFloat(1);
                         float latitude = array_coords.getFloat(0);
+
+                        String REQ = "SELECT DISTINCT tab_coordonnes FROM parcours_geo s, parcours_lignes_bus_star e where s.parcours_lignes_bus_star_id = e.parcours_lignes_bus_star_id and nomcourtligne = '" + nom_bus + "' and sens = '" + sens + "\'";
+                        ArrayList<String> single_val = databaseBinding.requestFetchSingleValue(REQ);
+
+                        String returned = optimisationAndFormating.getOutput(single_val.get(0), "["+ latitude + "," + longitude +"]");
+                        String[] returned_splited = returned.split(";");
+
                         String FormatedStringFeature = """
                                 {
                                 "type" : "Feature",
                                     "properties" : {
                                         "icon" : "bus",
-                                        "line" : \" """ + num_bus + "\"" + """
+                                        "line" : \" """ + nom_bus + "\"" + """
                                 \n\t},
                                 \t"geometry" : {
                                    \t"type" : "Point", 
                                    \t"coordinates" : [""" + longitude + ", " + latitude + "]\n" + """
-                                    }
+                                    },
+                                   \t"simulation" : {
+                                   \t"nextindex" : \"""" + returned_splited[1] + ",\n" + """                     
+                                   \t"sens" : \"""" + sens + "\"" + """ 
+                                   }
                                 }""";
 
                         FormatedStringContent += FormatedStringFeature;
                         empty = false;
+
                         // Feed Auxiliary HashMap
-                        if (BusNumber.containsKey(num_bus)) {
-                            BusNumber.put(num_bus, BusNumber.get(num_bus) + 1);
+                        if (BusNumber.containsKey(nom_bus)) {
+                            BusNumber.put(nom_bus, BusNumber.get(nom_bus) + 1);
                         } else {
-                            BusNumber.put(num_bus, 1);
+                            BusNumber.put(nom_bus, 1);
                         }
                     }
                 }

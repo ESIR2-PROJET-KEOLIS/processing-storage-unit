@@ -8,6 +8,7 @@ import com.treatmentunit.formating.DataFormating;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -63,7 +64,7 @@ public class RmqListenerPositionAllBus extends RmqListener implements Runnable{
                 try {
                     rmqPublisher.PublishQueue(dataFormating.formatReceivedJSON(message), publisherChannel);
                     System.out.println("[*] JSON data formated and sent to " + host + " on queue " + rmqPublisher.getTargetQueue() + ".");
-                } catch (TimeoutException e) {
+                } catch (TimeoutException | SQLException e) {
                     throw new RuntimeException(e);
                 }
             }
