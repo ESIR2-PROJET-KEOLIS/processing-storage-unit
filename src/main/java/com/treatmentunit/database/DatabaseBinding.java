@@ -17,7 +17,10 @@ public class DatabaseBinding {
         try {
             String host = System.getenv("DB_HOST");
             if(host == null) host = "localhost";
+            System.out.println(host);
+            String env_port = System.getenv("DB_PORT");
             int port = 6033;
+            if(env_port != null) port = Integer.parseInt(env_port);
             String db_name = "mydb";
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("[*] Tentative de connexion à la base de données...");
