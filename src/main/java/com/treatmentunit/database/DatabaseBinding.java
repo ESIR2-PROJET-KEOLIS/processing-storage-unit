@@ -21,7 +21,7 @@ public class DatabaseBinding {
             String db_name = "mydb";
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("[*] Tentative de connexion à la base de données...");
-            con = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+db_name+"?useSSL=false&serverTimezone=UTC", "root", "root");
+            con = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+db_name+"?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true", "root", "root");
             statement = con.createStatement();
             System.out.println("[*] Connexion réussie à la base de données.");
 
