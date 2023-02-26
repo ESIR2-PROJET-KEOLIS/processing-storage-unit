@@ -15,7 +15,8 @@ public class DatabaseBinding {
 
     public static void connectToSqlSocket() {
         try {
-            String host = "localhost";
+            String host = System.getenv("DB_HOST");
+            if(host == null) host = "localhost";
             int port = 6033;
             String db_name = "mydb";
             Class.forName("com.mysql.cj.jdbc.Driver");
