@@ -52,10 +52,10 @@ public class DatabaseBinding {
         if(result.next()) {
             ResultSetMetaData metadata = result.getMetaData();
             int col_count = metadata.getColumnCount();
-
-            for(int i = 1 ; i <= metadata.getColumnCount() ; i++) {
+            for(int i = 1 ; i <= col_count; i++) {
                 fetched.add(result.getString(i));
             }
+            result.close();
         }
         return fetched;
     }

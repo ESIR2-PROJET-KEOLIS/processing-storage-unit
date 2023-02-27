@@ -48,8 +48,6 @@ public class APIController {
     public static String parcoursArray(@RequestParam(value = "line") String line) {
         String REQ = "";
 
-
-
         return REQ;
     }
 
