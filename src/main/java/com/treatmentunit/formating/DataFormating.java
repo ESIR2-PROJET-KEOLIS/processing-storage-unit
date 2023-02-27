@@ -175,6 +175,7 @@ public class DataFormating {
                         String FormatedStringFeature = """
                                 {
                                 "type" : "Feature",
+                                    "id" : """ + i + ",\n" + """
                                     "properties" : {
                                         "icon" : "bus",
                                         "line" : \" """ + nom_bus + "\"" + ",\n"+ """

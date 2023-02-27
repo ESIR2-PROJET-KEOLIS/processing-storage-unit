@@ -31,7 +31,7 @@ public class APIController {
         // 0 Aller
         // 1 Retour
         try {
-            String REQ = "SELECT DISTINCT tab_coordonnes FROM parcours_geo s, parcours_lignes_bus_star e where s.parcours_lignes_bus_star_id = e.parcours_lignes_bus_star_id and nomcourtligne = '" + line + "' and sens = '" + sens + "\'";
+            String REQ = "SELECT DISTINCT tab_coordonnes FROM parcours_geo s, parcours_lignes_bus_star e where s.parcours_lignes_bus_star_id = e.parcours_lignes_bus_star_id and nomcourtligne = '" + line + "' and sens = '" + sens + "\'" + " and type=\'Principal\'";
             ArrayList<String> single_val = databaseBinding.requestFetchSingleValue(REQ);
             String returned = optAndForm.getOutput(single_val.get(0), "");
             String[] val = returned.split(";");
@@ -43,4 +43,14 @@ public class APIController {
             return "Erreur SQL ! ";
         }
     }
+
+    @GetMapping("/pathsforarray")
+    public static String parcoursArray(@RequestParam(value = "line") String line) {
+        String REQ = "";
+
+
+
+        return REQ;
+    }
+
 }
