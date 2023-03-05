@@ -58,15 +58,19 @@ public class RmqListenerPositionAllBus extends RmqListener implements Runnable{
 
         System.out.println("[*] Listening on " + QUEUE_NAME + "...");
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            if(message.startsWith("{")) {
-                System.out.println("[*] Raw JSON data received on " + QUEUE_NAME);
-                try {
-                    rmqPublisher.PublishQueue(dataFormating.formatReceivedJSON(message), publisherChannel);
-                    System.out.println("[*] JSON data formated and sent to " + host + " on queue " + rmqPublisher.getTargetQueue() + ".");
-                } catch (TimeoutException | SQLException e) {
-                    throw new RuntimeException(e);
+            if(!RmqListenerPARCOURS.isBusy() && !RmqListenerGTFS.isBusy()) {
+                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                if (message.startsWith("{")) {
+                    System.out.println("[*] Raw JSON data received on " + QUEUE_NAME);
+                    try {
+                        rmqPublisher.PublishQueue(dataFormating.formatReceivedJSON(message), publisherChannel);
+                        System.out.println("[*] JSON data formated and sent to " + host + " on queue " + rmqPublisher.getTargetQueue() + ".");
+                    } catch (TimeoutException | SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+            } else {
+                System.out.println("[BUSY] THE DATABASE IS CURRENTLY BEING FILLED, NO DATA PROCESSED.");
             }
         };
 

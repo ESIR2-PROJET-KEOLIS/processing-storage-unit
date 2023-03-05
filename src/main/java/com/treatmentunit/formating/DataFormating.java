@@ -166,8 +166,15 @@ public class DataFormating {
                         float longitude = array_coords.getFloat(1);
                         float latitude = array_coords.getFloat(0);
 
-                        String REQ = "SELECT DISTINCT tab_coordonnes FROM parcours_geo s, parcours_lignes_bus_star e where s.parcours_lignes_bus_star_id = e.parcours_lignes_bus_star_id and nomcourtligne = '" + nom_bus + "' and sens = '" + sens + "\'";
+                        String REQ = "SELECT DISTINCT tab_coordonnes FROM parcours_geo s, parcours_lignes_bus_star e where s.parcours_lignes_bus_star_id = e.parcours_lignes_bus_star_id and type='Principal' and nomcourtligne = '" + nom_bus + "' and sens = '" + sens + "\'";
                         ArrayList<String> single_val = databaseBinding.requestFetchSingleValue(REQ);
+
+
+                        System.out.println("------------  BEGIN DEBUG GETOUTPUT ------------  ");
+                        System.out.println("SINGLE_VAL SIZE = " + single_val.size());
+                        System.out.println("INPUT = " + single_val.get(0));
+                        System.out.println("CURRENT_BUS_POS = " + "["+ latitude + "," + longitude +"]");
+                        System.out.println("------------  END DEBUG GETOUTPUT ------------ ");
 
                         String returned = optimisationAndFormating.getOutput(single_val.get(0), "["+ latitude + "," + longitude +"]");
                         String[] returned_splited = returned.split(";");

@@ -22,6 +22,8 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
     private DatabaseBinding databaseBinding = new DatabaseBinding();
     DataFormating dataFormating = new DataFormating();
 
+    private static boolean isBusy = true;
+
     public RmqListenerPARCOURS(String host) {
         super(host);
     }
@@ -48,6 +50,7 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
 
         System.out.println("[*] Listening on " + QUEUE_NAME + "...");
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            isBusy = true;
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             System.out.println("[*] Raw JSON data received on " + QUEUE_NAME);
             StringBuilder giga_insert = new StringBuilder();
@@ -103,7 +106,7 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
                 coords_insert = new StringBuilder();
             }
             System.out.println("[*] Data received on PARCOURS successfully processed.");
-
+            isBusy = false;
         };
 
         try {
@@ -111,5 +114,9 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isBusy() {
+        return isBusy;
     }
 }

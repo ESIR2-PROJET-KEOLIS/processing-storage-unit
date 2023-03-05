@@ -28,6 +28,8 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
     private Channel channel = null;
     private DatabaseBinding databaseBinding = new DatabaseBinding();
 
+    private static boolean isBusy = true;
+
     public RmqListenerGTFS(String host) {
         super(host);
     }
@@ -56,6 +58,7 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
 
         System.out.println("[*] Listening on " + QUEUE_NAME + "...");
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            isBusy = true;
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
 
             if (message.startsWith("{")) {
@@ -135,6 +138,7 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
                                 }
                             }
                             System.out.println("[*] Base de données remplie avec succès ! ");
+                            isBusy = false;
                         } else {
                             System.out.println("[!] Dossier " + FILE_NAME_DEZIP + " vide !");
                         }
@@ -150,5 +154,9 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isBusy() {
+        return isBusy;
     }
 }

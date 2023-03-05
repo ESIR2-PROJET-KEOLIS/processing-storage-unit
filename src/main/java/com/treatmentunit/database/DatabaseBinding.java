@@ -48,7 +48,6 @@ public class DatabaseBinding {
 
     public ArrayList<String> requestFetchSingleValue(String query) throws SQLException {
         ArrayList<String> fetched = new ArrayList<>();
-        if(result.isClosed()) {
             result = statement.executeQuery(query);
             if(result.next()) {
                 ResultSetMetaData metadata = result.getMetaData();
@@ -57,10 +56,6 @@ public class DatabaseBinding {
                     fetched.add(result.getString(i));
                 }
             }
-        } else {
-            result.close();
-            requestFetchSingleValue(query);
-        }
         return fetched;
     }
 
