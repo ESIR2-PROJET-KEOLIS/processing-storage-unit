@@ -48,14 +48,18 @@ public class DatabaseBinding {
 
     public ArrayList<String> requestFetchSingleValue(String query) throws SQLException {
         ArrayList<String> fetched = new ArrayList<>();
-        result = statement.executeQuery(query);
-        if(result.next()) {
-            ResultSetMetaData metadata = result.getMetaData();
-            int col_count = metadata.getColumnCount();
-            for(int i = 1 ; i <= col_count; i++) {
-                fetched.add(result.getString(i));
+        if(result.isClosed()) {
+            result = statement.executeQuery(query);
+            if(result.next()) {
+                ResultSetMetaData metadata = result.getMetaData();
+                int col_count = metadata.getColumnCount();
+                for(int i = 1 ; i <= col_count; i++) {
+                    fetched.add(result.getString(i));
+                }
             }
+        } else {
             result.close();
+            requestFetchSingleValue(query);
         }
         return fetched;
     }
