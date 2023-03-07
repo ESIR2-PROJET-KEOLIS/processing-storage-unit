@@ -65,7 +65,7 @@ public class RmqListenerPositionAllBus extends RmqListener implements Runnable{
                     try {
                         rmqPublisher.PublishQueue(dataFormating.formatReceivedJSON(message), publisherChannel);
                         System.out.println("[*] JSON data formated and sent to " + host + " on queue " + rmqPublisher.getTargetQueue() + ".");
-                    } catch (TimeoutException | SQLException e) {
+                    } catch (TimeoutException | SQLException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }

@@ -131,7 +131,7 @@ public class DataFormating {
     }
 
 
-    public String formatReceivedJSON(String src) throws SQLException, IOException {
+    public String formatReceivedJSON(String src) throws SQLException, IOException, InterruptedException {
         System.out.println("[*] Formatting ...");
 
         FormatedStringHeader = """

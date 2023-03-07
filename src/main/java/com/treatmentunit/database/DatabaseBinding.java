@@ -46,10 +46,10 @@ public class DatabaseBinding {
         }
     }
 
-    public ArrayList<String> requestFetchSingleValue(String query) throws SQLException {
+    public ArrayList<String> requestFetchSingleValue(String query) throws SQLException, InterruptedException {
         ArrayList<String> fetched = new ArrayList<>();
-            result = statement.executeQuery(query);
-            //if(!result.isClosed()) {
+            try {
+                result = statement.executeQuery(query);
                 if(result.next()) {
                     ResultSetMetaData metadata = result.getMetaData();
                     int col_count = metadata.getColumnCount();
@@ -57,7 +57,10 @@ public class DatabaseBinding {
                         fetched.add(result.getString(i));
                     }
                 }
-            //}
+            } catch (SQLException e) {
+                Thread.sleep(12);
+            }
+
         return fetched;
     }
 

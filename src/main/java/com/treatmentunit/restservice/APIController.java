@@ -37,7 +37,7 @@ public class APIController {
             String[] val = returned.split(";");
             return val[0];
 
-        } catch (SQLException sqlException) {
+        } catch (SQLException | InterruptedException sqlException) {
             System.out.println("[!] Erreur SQL !");
             sqlException.printStackTrace();
             return "Erreur SQL ! ";
