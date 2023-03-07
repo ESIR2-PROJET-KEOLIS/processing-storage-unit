@@ -64,7 +64,7 @@ public class DatabaseBinding {
 
         return fetched;
     }
-     */
+    */
 
 
     public String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
@@ -78,7 +78,7 @@ public class DatabaseBinding {
             Thread.sleep(12);
         }
 
-        return result.getString(0);
+        return result.getString(1);
     }
 
 }
