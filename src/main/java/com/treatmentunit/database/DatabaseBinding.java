@@ -50,10 +50,12 @@ public class DatabaseBinding {
         ArrayList<String> fetched = new ArrayList<>();
             result = statement.executeQuery(query);
             if(result.next()) {
-                ResultSetMetaData metadata = result.getMetaData();
-                int col_count = metadata.getColumnCount();
-                for(int i = 1 ; i <= col_count; i++) {
-                    fetched.add(result.getString(i));
+                if(!result.isClosed()) {
+                    ResultSetMetaData metadata = result.getMetaData();
+                    int col_count = metadata.getColumnCount();
+                    for (int i = 1; i <= col_count; i++) {
+                        fetched.add(result.getString(i));
+                    }
                 }
             }
         return fetched;
