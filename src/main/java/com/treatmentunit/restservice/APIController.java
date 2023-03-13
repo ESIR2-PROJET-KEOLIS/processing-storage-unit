@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
@@ -44,11 +45,13 @@ public class APIController {
         }
     }
 
-    @GetMapping("/pathsforarray")
-    public static String parcoursArray(@RequestParam(value = "line") String line) {
-        String REQ = "";
+    @GetMapping("/allpaths")
+    public static String parcoursArray() throws SQLException, InterruptedException {
+        String REQ = "SELECT DISTINCT nomcourtligne, tab_coordonnes, sens FROM parcours_geo s, parcours_lignes_bus_star e where s.parcours_lignes_bus_star_id = e.parcours_lignes_bus_star_id and type=\'Principal\'";
 
-        return REQ;
+        ArrayList<ArrayList<String>> fetched = databaseBinding.requestFetchNColumns(REQ);
+
+        return optAndForm.convertFromArrayListOfArrayListsToJSON(fetched);
     }
 
 }

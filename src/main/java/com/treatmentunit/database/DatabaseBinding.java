@@ -67,19 +67,47 @@ public class DatabaseBinding {
     */
 
 
-    public String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
+    public ArrayList<ArrayList<String>> requestFetchNColumns(String query) throws SQLException, InterruptedException {
+        ArrayList<ArrayList<String>> fetched = new ArrayList<>();
+        synchronized (fetched) {
+            try {
+
+                ResultSet result;
+                statement = con.createStatement();
+                result = statement.executeQuery(query);
+                ResultSetMetaData metadata = result.getMetaData();
+                while (result.next()) {
+                    ArrayList<String> entry = new ArrayList<>();
+                    for (int i = 1; i <= metadata.getColumnCount(); i++) {
+                        entry.add(result.getString(i));
+                    }
+                    fetched.add(entry);
+                    //System.out.println(entry.get(0)+"\n");
+                }
+
+                return fetched;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+        public String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
         ArrayList<String> fetched = new ArrayList<>();
         String val = "";
-        try {
-            statement = con.createStatement();
-            result = statement.executeQuery(query);
-            result.next();
-            ResultSetMetaData metadata = result.getMetaData();
-            int col_count = metadata.getColumnCount();
-            val = result.getString(1);
-            statement.close();
-        } catch (SQLException e) {
-            Thread.sleep(12);
+        synchronized (fetched) {
+            try {
+                ResultSet result;
+                statement = con.createStatement();
+                result = statement.executeQuery(query);
+                result.next();
+                ResultSetMetaData metadata = result.getMetaData();
+                int col_count = metadata.getColumnCount();
+                val = result.getString(1);
+                statement.close();
+            } catch (SQLException e) {
+                Thread.sleep(12);
+            }
         }
 
         return val;

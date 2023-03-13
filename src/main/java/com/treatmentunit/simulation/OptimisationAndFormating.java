@@ -1,11 +1,18 @@
 package com.treatmentunit.simulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class OptimisationAndFormating {
 
-    private static ArrayList<String> arrangedCoords = new ArrayList<>();
+    private static CopyOnWriteArrayList<String> arrangedCoords = new CopyOnWriteArrayList<>();
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
+
 
     /**
      * @param a -> Lat1 a
@@ -31,40 +38,43 @@ public class OptimisationAndFormating {
         return resultat;
     }
 
-    public static ArrayList<String> FormatingAndInversing(String input) {
+    public static CopyOnWriteArrayList<String> FormatingAndInversing(String input) {
+        synchronized (arrangedCoords) {
+            if (!input.isEmpty()) {
 
-        if (!input.isEmpty()) {
+                double lastPoint_lat = 0;
+                double lastPont_long = 0;
 
-            double lastPoint_lat = 0;
-            double lastPont_long = 0;
+                //  !!!! PARSE THE JSON TAB CONTAINING THE COORDS
 
-            //  !!!! PARSE THE JSON TAB CONTAINING THE COORDS
+                //if(input.charAt(input.length()-1) == ']') {
+                //input = input.substring(1, input.length()-1);
+                //}
 
-            //if(input.charAt(input.length()-1) == ']') {
-            //input = input.substring(1, input.length()-1);
-            //}
+                input = input.substring(1, input.length() - 1);
+                input = input + ",";
 
-            input = input.substring(1, input.length() - 1);
-            input = input + ",";
+                String[] splitedCoordsList = input.split("],");
+                for (String s : splitedCoordsList) {
+                    String splitedCoordsSub = s.trim().substring(1);
+                    //System.out.println(splitedCoordsSub);
+                    String[] splitedCoords = splitedCoordsSub.split(",");
+                    String formated = splitedCoords[1] + "," + splitedCoords[0];
+                    formated = formated.trim();
+                    //System.out.println("formated out : " + formated);
 
-            String[] splitedCoordsList = input.split("],");
-            for (String s : splitedCoordsList) {
-                String splitedCoordsSub = s.trim().substring(1);
-                //System.out.println(splitedCoordsSub);
-                String[] splitedCoords = splitedCoordsSub.split(",");
-                String formated = splitedCoords[1] + "," + splitedCoords[0];
-                formated = formated.trim();
-                //System.out.println("formated out : " + formated);
+                    int DELTA = 30;
+                    if (distanceViaLatEtLong(Double.parseDouble(splitedCoords[1]), lastPoint_lat, Double.parseDouble(splitedCoords[0]), lastPont_long) > DELTA) {
 
-                int DELTA = 30;
-                if (distanceViaLatEtLong(Double.parseDouble(splitedCoords[1]), lastPoint_lat, Double.parseDouble(splitedCoords[0]), lastPont_long) > DELTA) {
-                    arrangedCoords.add(formated);
-                    //System.out.println(formated+",");
-                    lastPoint_lat = Double.parseDouble(splitedCoords[1]);
-                    lastPont_long = Double.parseDouble(splitedCoords[0]);
+                        arrangedCoords.add(formated);
+
+                        lastPoint_lat = Double.parseDouble(splitedCoords[1]);
+                        lastPont_long = Double.parseDouble(splitedCoords[0]);
+                    }
                 }
             }
         }
+
         return arrangedCoords;
     }
 
@@ -85,57 +95,88 @@ public class OptimisationAndFormating {
 
     public String getOutput(String input, String current_bus_pos) {
 
-        FormatingAndInversing(input);
+        synchronized (arrangedCoords) {
 
-        String beg = "[";
-        for (String element : arrangedCoords) {
-            element = "[" + element + "],";
-            beg += element;
+            FormatingAndInversing(input);
+
+            String beg = "[";
+            for (String element : arrangedCoords) {
+                element = "[" + element + "],";
+                beg += element;
+            }
+            beg = beg.substring(0, beg.length() - 1);
+            beg += "]";
+
+            double nearest_point = 999999999;
+            int idx_of_nearest_point = 0;
+
+            if (!Objects.equals(current_bus_pos, "")) {
+                current_bus_pos = current_bus_pos.substring(1, current_bus_pos.length() - 1);
+                String[] dos = current_bus_pos.split(",");
+                double src_lat = Double.parseDouble(dos[0]);
+                double src_lon = Double.parseDouble(dos[1]);
+                //System.out.println("DEBUG " + src_lat + " " + src_lon);
+
+
+                for (int i = 0 ; i < arrangedCoords.size() ; i++) {
+                    String element = arrangedCoords.get(i);
+                    String[] element_splited = element.split(",");
+                    double dst_lat = Double.parseDouble(element_splited[0]);
+                    double dst_lon = Double.parseDouble(element_splited[1]);
+                    double tocompare = distanceViaLatEtLong(src_lat, dst_lat, src_lon, dst_lon);
+
+                    if (nearest_point > tocompare) {
+                        nearest_point = tocompare;
+                        if(idx_of_nearest_point != arrangedCoords.indexOf(element)) {
+                            idx_of_nearest_point = arrangedCoords.indexOf(element);
+                        } else {
+                            idx_of_nearest_point = idx_of_nearest_point + 1;
+                            //System.out.println("Point le plus proche: " + arrangedCoords.get(idx_of_nearest_point));
+
+                            String element_dbg = arrangedCoords.get(idx_of_nearest_point);
+                            String[] element_dbg_split = element_dbg.split(",");
+                            double dst_lat1_dbg = Double.parseDouble(element_dbg_split[0]);
+                            double dst_lon1_dbg = Double.parseDouble(element_dbg_split[1]);
+                            nearest_point = distanceViaLatEtLong(src_lat, dst_lat1_dbg, src_lon, dst_lon1_dbg);
+                        }
+                    }
+                }
+                if (nearest_point == 999999999) {
+                    System.out.println("[!] ERROR: Nearest coords for the current position have not been processed.");
+                }
+            }
+            arrangedCoords.clear();
+            return beg + ";" + idx_of_nearest_point;
         }
-        beg = beg.substring(0, beg.length() - 1);
-        beg += "]";
+    }
 
-        double nearest_point = 999999999;
-        int idx_of_nearest_point = 0;
+    public String convertFromArrayListOfArrayListsToJSON(ArrayList<ArrayList<String>> input) {
 
-        if (!Objects.equals(current_bus_pos, "")) {
-            current_bus_pos = current_bus_pos.substring(1, current_bus_pos.length() - 1);
-            String[] dos = current_bus_pos.split(",");
-            double src_lat = Double.parseDouble(dos[0]);
-            double src_lon = Double.parseDouble(dos[1]);
-            //System.out.println("DEBUG " + src_lat + " " + src_lon);
+        String result = "{\n";
 
-
-            for (int i = 0 ; i < arrangedCoords.size() ; i++) {
-                String element = arrangedCoords.get(i);
-                String[] element_splited = element.split(",");
-                double dst_lat = Double.parseDouble(element_splited[0]);
-                double dst_lon = Double.parseDouble(element_splited[1]);
-
-                double tocompare = distanceViaLatEtLong(src_lat, dst_lat, src_lon, dst_lon);
-
-                if (nearest_point > tocompare) {
-                    nearest_point = tocompare;
-                    if(idx_of_nearest_point != arrangedCoords.indexOf(element)) {
-                        idx_of_nearest_point = arrangedCoords.indexOf(element);
-                    } else {
-                        idx_of_nearest_point = idx_of_nearest_point + 1;
-                        //System.out.println("Point le plus proche: " + arrangedCoords.get(idx_of_nearest_point));
-
-                        String element_dbg = arrangedCoords.get(idx_of_nearest_point);
-                        String[] element_dbg_split = element_dbg.split(",");
-                        double dst_lat1_dbg = Double.parseDouble(element_dbg_split[0]);
-                        double dst_lon1_dbg = Double.parseDouble(element_dbg_split[1]);
-                        nearest_point = distanceViaLatEtLong(src_lat, dst_lat1_dbg, src_lon, dst_lon1_dbg);
+        synchronized (input) {
+        for(ArrayList<String> val : input) {
+            synchronized (val) {
+                for(int i = 0 ; i < val.size() ; i++) {
+                        result += """
+                            \n
+                            \t{
+                                \t\tline: \"""" + val.get(0) + "\",\n\n" + """
+                                \t\tsens: \"""" + val.get(2) + "\",\n\n" + """
+                                \t\ttraject:  """ + OptimisationAndFormating.FormatingAndInversing(val.get(1)) +  "\n\n";
+                        if(i != val.size()-1) {
+                            result += "\t},\n";
+                        } else {
+                            result += "\t}\n";
+                        }
                     }
                 }
             }
-
-            if (nearest_point == 999999999) {
-                System.out.println("[!] ERROR: Nearest coords for the current position have not been processed.");
-            }
         }
-        arrangedCoords.clear();
-        return beg + ";" + idx_of_nearest_point;
+    
+        result += "\n}";
+        
+        return result;
     }
+
 }
