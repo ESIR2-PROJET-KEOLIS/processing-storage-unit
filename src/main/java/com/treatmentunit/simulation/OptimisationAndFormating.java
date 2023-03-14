@@ -63,7 +63,7 @@ public class OptimisationAndFormating {
                     formated = formated.trim();
                     //System.out.println("formated out : " + formated);
 
-                    int DELTA = 30;
+                    int DELTA = 10;
                     if (distanceViaLatEtLong(Double.parseDouble(splitedCoords[1]), lastPoint_lat, Double.parseDouble(splitedCoords[0]), lastPont_long) > DELTA) {
 
                         arrangedCoords.add(formated);
@@ -116,7 +116,6 @@ public class OptimisationAndFormating {
                 double src_lat = Double.parseDouble(dos[0]);
                 double src_lon = Double.parseDouble(dos[1]);
                 //System.out.println("DEBUG " + src_lat + " " + src_lon);
-
 
                 for (int i = 0 ; i < arrangedCoords.size() ; i++) {
                     String element = arrangedCoords.get(i);
