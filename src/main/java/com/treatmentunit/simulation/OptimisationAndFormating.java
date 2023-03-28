@@ -369,5 +369,3 @@ public class OptimisationAndFormating {
         return beg + ";" + out_ind;
     }
 }
-
-}
