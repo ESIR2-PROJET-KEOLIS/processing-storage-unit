@@ -63,7 +63,7 @@ public class OptimisationAndFormating {
                     formated = formated.trim();
                     //System.out.println("formated out : " + formated);
 
-                    int DELTA = 10;
+                    int DELTA = 30;
                     if (distanceViaLatEtLong(Double.parseDouble(splitedCoords[1]), lastPoint_lat, Double.parseDouble(splitedCoords[0]), lastPont_long) > DELTA) {
 
                         arrangedCoords.add(formated);
@@ -93,7 +93,7 @@ public class OptimisationAndFormating {
         }
     }
 
-    public String getOutput(String input, String current_bus_pos) {
+   /* public String getOutput(String input, String current_bus_pos) {
 
         synchronized (arrangedCoords) {
 
@@ -116,6 +116,64 @@ public class OptimisationAndFormating {
                 double src_lat = Double.parseDouble(dos[0]);
                 double src_lon = Double.parseDouble(dos[1]);
                 //System.out.println("DEBUG " + src_lat + " " + src_lon);
+
+
+                for (int i = 0 ; i < arrangedCoords.size() ; i++) {
+                    String element = arrangedCoords.get(i);
+                    String[] element_splited = element.split(",");
+                    double dst_lat = Double.parseDouble(element_splited[0]);
+                    double dst_lon = Double.parseDouble(element_splited[1]);
+                    double tocompare = distanceViaLatEtLong(src_lat, dst_lat, src_lon, dst_lon);
+
+                    if (nearest_point > tocompare) {
+                        nearest_point = tocompare;
+                        if(idx_of_nearest_point != arrangedCoords.indexOf(element)) {
+                            idx_of_nearest_point = arrangedCoords.indexOf(element);
+                        } else {
+                            idx_of_nearest_point = idx_of_nearest_point + 1;
+                            //System.out.println("Point le plus proche: " + arrangedCoords.get(idx_of_nearest_point));
+
+                            String element_dbg = arrangedCoords.get(idx_of_nearest_point);
+                            String[] element_dbg_split = element_dbg.split(",");
+                            double dst_lat1_dbg = Double.parseDouble(element_dbg_split[0]);
+                            double dst_lon1_dbg = Double.parseDouble(element_dbg_split[1]);
+                            nearest_point = distanceViaLatEtLong(src_lat, dst_lat1_dbg, src_lon, dst_lon1_dbg);
+                        }
+                    }
+                }
+                if (nearest_point == 999999999) {
+                    System.out.println("[!] ERROR: Nearest coords for the current position have not been processed.");
+                }
+            }
+            arrangedCoords.clear();
+            return beg + ";" + idx_of_nearest_point;
+        }
+    } */
+
+    public String getOutput2(String input, String current_bus_pos) {
+
+        synchronized (arrangedCoords) {
+
+            FormatingAndInversing(input);
+
+            String beg = "[";
+            for (String element : arrangedCoords) {
+                element = "[" + element + "],";
+                beg += element;
+            }
+            beg = beg.substring(0, beg.length() - 1);
+            beg += "]";
+
+            double nearest_point = 999999999;
+            int idx_of_nearest_point = 0;
+
+            if (!Objects.equals(current_bus_pos, "")) {
+                current_bus_pos = current_bus_pos.substring(1, current_bus_pos.length() - 1);
+                String[] dos = current_bus_pos.split(",");
+                double src_lat = Double.parseDouble(dos[0]);
+                double src_lon = Double.parseDouble(dos[1]);
+                //System.out.println("DEBUG " + src_lat + " " + src_lon);
+
 
                 for (int i = 0 ; i < arrangedCoords.size() ; i++) {
                     String element = arrangedCoords.get(i);
@@ -178,4 +236,136 @@ public class OptimisationAndFormating {
         return result;
     }
 
+
+    /**
+     * Calcule la distance entre deux points d'un plan.
+     *
+     * @param x1 première coordonnée x
+     * @param y1 première coordonnée y
+     * @param x2 deuxième coordonnée x
+     * @param y2 deuxième coordonée y
+     * @return ((x1-x2)**2 + (y1-y2)**2)**0.5
+     *
+     */
+    private double distance(double x1, double y1, double x2, double y2){
+        return  Math.pow(Math.pow((x1-x2),2) + Math.pow((y1-y2),2), 0.5);
+    }
+
+
+    /**
+     * Calcule la différence d'angle entre .
+     *
+     * @param x1 première coordonnée x
+     * @param y1 première coordonnée y
+     * @param x2 deuxième coordonnée x
+     * @param y2 deuxième coordonée y
+     * @return la valeurs absolu de la différence entre les deux angles.
+     *
+     */
+    private double diff_abs_angle(double x1, double y1, double x2, double y2){
+        double angl1 = Math.atan2(y1, x1);
+        double angl2 = Math.atan2(y2, x2);
+        return Math.abs(angl1-angl2);
+    }
+
+    /**
+     * Calcule la différence d'angle entre .
+     *
+     * @param input
+     * @param current_bus_pos
+     * @return Une string avec un tableau contenant toute les position d'arrets ainsi que le prochaine index du bus
+     *
+     */
+    public String getOutput(String input, String current_bus_pos) {
+
+        String beg;
+        int out_ind = 0;
+        synchronized (arrangedCoords) {
+
+            FormatingAndInversing(input);
+
+            beg = "[";
+            for (String element : arrangedCoords) {
+                element = "[" + element + "],";
+                beg += element;
+            }
+            beg = beg.substring(0, beg.length() - 1);
+            beg += "]";
+
+
+            if (!Objects.equals(current_bus_pos, "")) {
+                current_bus_pos = current_bus_pos.substring(1, current_bus_pos.length() - 1);
+                String[] dos = current_bus_pos.split(",");
+                double x = Double.parseDouble(dos[0]);
+                double y = Double.parseDouble(dos[1]);
+                //System.out.println("DEBUG " + src_lat + " " + src_lon);
+
+                double proch1 = 1000;
+                int proch1_ind = 0;
+                double proch2 = 1000;
+                int proch2_ind = 0;
+
+
+                for (int i = 0; i < arrangedCoords.size(); i++) {
+                    String element = arrangedCoords.get(i);
+                    String[] element_splited = element.split(",");
+                    double x1 = Double.parseDouble(element_splited[0]);
+                    double y1 = Double.parseDouble(element_splited[1]);
+
+                    double dist = distance(x, y, x1, y1);
+
+                    if (dist <= Math.max(proch1, proch2)) {
+                        if (dist <= proch1) {
+                            proch1 = dist;
+                            proch1_ind = i;
+                        } else {
+                            proch2 = dist;
+                            proch2_ind = i;
+                        }
+                    }
+                    if (proch1_ind != 0 && proch2_ind != 0) {
+                        element = arrangedCoords.get(proch1_ind);
+                        element_splited = element.split(",");
+                        x1 = Double.parseDouble(element_splited[0]);
+                        y1 = Double.parseDouble(element_splited[1]);
+                        double t1 = x - x1;
+                        double t2 = y - y1;
+
+                        element = arrangedCoords.get(proch1_ind - 1);
+                        element_splited = element.split(",");
+                        double x2 = Double.parseDouble(element_splited[0]);
+                        double y2 = Double.parseDouble(element_splited[1]);
+                        double t3 = x2 - x1;
+                        double t4 = y2 - y1;
+
+                        element = arrangedCoords.get(proch2_ind);
+                        element_splited = element.split(",");
+                        x1 = Double.parseDouble(element_splited[0]);
+                        y1 = Double.parseDouble(element_splited[1]);
+                        double t1b = x - x1;
+                        double t2b = y - y1;
+
+                        element = arrangedCoords.get(proch1_ind - 1);
+                        element_splited = element.split(",");
+                        x2 = Double.parseDouble(element_splited[0]);
+                        y2 = Double.parseDouble(element_splited[1]);
+                        double t3b = x2 - x1;
+                        double t4b = y2 - y1;
+                        if (diff_abs_angle(t1, t2, t3, t4) < diff_abs_angle(t1b, t2b, t3b, t4b)) {
+                            arrangedCoords.clear();
+                            out_ind = proch1_ind;
+                        } else {
+                            arrangedCoords.clear();
+                            out_ind = proch2_ind;
+                        }
+                    } else {
+                        out_ind = 1;
+                    }
+                }
+            }
+
+        }
+        System.out.println("ici je renoie " + out_ind);
+        return beg + ";" + out_ind;
+    }
 }
