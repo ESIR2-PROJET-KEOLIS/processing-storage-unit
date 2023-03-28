@@ -248,7 +248,7 @@ public class OptimisationAndFormating {
      *
      */
     private double distance(double x1, double y1, double x2, double y2){
-        return  pow(pow((x1-x2),2) + pow((y1-y2),2), 0.5);
+        return  pow(Math.pow((x1-x2),2) + Math.pow((y1-y2),2), 0.5);
     }
 
 
@@ -263,9 +263,9 @@ public class OptimisationAndFormating {
      *
      */
     private double diff_abs_angle(double x1, double y1, double x2, double y2){
-        double angl1 = atan2(y1, x1);
-        double angl2= atan2(y2, x2);
-        return abs(angl1-angl2);
+        double angl1 = Math.atan2(y1, x1);
+        double angl2 = Math.atan2(y2, x2);
+        return Math.abs(angl1-angl2);
     }
 
     /**
@@ -314,7 +314,7 @@ public class OptimisationAndFormating {
 
                     double dist = distance(x, y, x1, y1);
 
-                    if (dist <= max(proch1, proch2)) {
+                    if (dist <= Math.max(proch1, proch2)) {
                         if (dist <= proch1) {
                             proch1 = dist;
                             proch1_ind = i;
