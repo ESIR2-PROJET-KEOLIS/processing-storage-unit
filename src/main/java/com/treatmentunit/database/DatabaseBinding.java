@@ -92,7 +92,7 @@ public class DatabaseBinding {
         }
     }
 
-        public String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
+    public String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
         ArrayList<String> fetched = new ArrayList<>();
         String val = "";
         synchronized (fetched) {
@@ -112,5 +112,6 @@ public class DatabaseBinding {
 
         return val;
     }
+
 
 }

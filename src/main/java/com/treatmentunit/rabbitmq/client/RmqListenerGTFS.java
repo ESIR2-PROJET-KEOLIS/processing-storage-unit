@@ -93,6 +93,7 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
                     databaseBinding.requestInsert("TRUNCATE stops");
                     databaseBinding.requestInsert("TRUNCATE stop_times");
                     databaseBinding.requestInsert("TRUNCATE trips");
+                    databaseBinding.requestInsert("TRUNCATE simulation_en_toute_heure");
 
                     File folder = new File(FILE_NAME_DEZIP);
                     if (folder.isDirectory()) {
@@ -137,11 +138,13 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
                                     }
                                 }
                             }
+                            databaseBinding.requestInsert("CREATE TABLE simulation_en_toute_heure AS SELECT * FROM (SELECT t.trip_id, min_departure_time, max_arrival_time, pg.tab_coordonnes, r.route_short_name, monday, tuesday, wednesday, thursday, friday, saturday, sunday, t.direction_id FROM (SELECT trip_id, MIN(departure_time) AS min_departure_time, MAX(arrival_time) AS max_arrival_time FROM stop_times GROUP BY trip_id) as custom, trips t, calendar c, routes r, parcours_geo pg WHERE custom.trip_id = t.trip_id AND t.service_id = c.service_id AND t.route_id = r.route_id AND c.service_id = t.service_id AND shape_id = pg.parcours_lignes_bus_star_id) as cus;");
                             System.out.println("[*] Base de données remplie avec succès ! ");
                             isBusy = false;
                         } else {
                             System.out.println("[!] Dossier " + FILE_NAME_DEZIP + " vide !");
                         }
+
                     } else {
                         System.out.println("[!] Chemin invalide ! ");
                     }

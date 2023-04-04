@@ -151,6 +151,7 @@ route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_
 "0482","1","Ts82","Noyal-Châtillon-sur-Seiche (Ise) <> Chartres-de-Bretagne (Collège Pôle Sud)","Transport scolaire","3","","96BF0D","FFFFFF","4482"
 "0491","1","Ts91","Rennes (Collège Rosa-Parks) <> Vezin-le-Coquet (Vallée)","Transport scolaire","3","","B269AB","FFFFFF","4491"
 "0707","1","Bzh7","Bécherel (Bécherel Centre) <> Rennes (Gares)","BreizhGo","3","","","","1707"
+"0802","1","b relais","Cesson-Sévigné (Cesson - Viasilva) <> Saint-Jacques-de-la-Lande (Saint-Jacques - Gaîté)","Spéciale","3","","FFFF00","1A171B","3802"
 "0804","1","TTZ","Rennes <> Noyal-Châtillon-sur-Seiche (Touche Tizon)","Spéciale","3","","009C99","FFFFFF","3804"
 "0806","1","E4","Bus de Stade : Rennes (Roazhon Park) <> Communes","Evènementiel","3","","","","1806"
 "0810","1","E1","Rennes (Charles de Gaulle - République) <> Saint-Jacques-de-la Lande (Parc Expo) via  Saint-Jacques-de-la Lande (Saint-Jacques - Gaîté)","Evènementiel","3","","","","1810"
