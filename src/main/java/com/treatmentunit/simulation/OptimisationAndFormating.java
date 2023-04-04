@@ -408,14 +408,14 @@ public class OptimisationAndFormating {
                 //res += "\t\t\"position_opti\" : [" + OPTIMISED_PATH.get(index_of_nearest_opti).toString() + "],\n";
                 res += "\t\t\"index_in_opti\" : " + index_of_nearest_opti + ",\n";
 
-                System.out.println("TEST: " + initial_path.get(index_of_nearest).toString());
+                //System.out.println("TEST: " + initial_path.get(index_of_nearest).toString());
 
                 String r = initial_path.get(index_of_nearest).toString().substring(1, initial_path.get(index_of_nearest).toString().length()-1);
                 String[] reverse = r.split(",");
 
                 res += "\t\t\"next_index_opti\" : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]").split(";")[1];
 
-                System.out.println("GetOutput renvoie le résultat suivant : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]"));
+                //System.out.println("GetOutput renvoie le résultat suivant : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]"));
 
                 if(i != input_tab.size()-1) {
                     res += "\t},\n";
