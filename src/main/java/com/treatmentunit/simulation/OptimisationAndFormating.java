@@ -268,6 +268,34 @@ public class OptimisationAndFormating {
         return Math.abs(angl1-angl2);
     }
 
+
+
+    /**
+     * Renvoie la coordonnées de X en cartésien en fonctin de la latitude et longitude
+     * @param lat 
+     * @param lon 
+     * @return la coordonées suivant x en cartésian
+     */
+    private double cartX(double lat, double lon){
+        double rayT = 6300000;
+
+        return rayT * Math.cos(lat) * Math.cos(lon);
+    }
+
+ /**
+     * Renvoie la coordonnées de X en cartésien en fonctin de la latitude et longitude
+     * @param lat 
+     * @param lon 
+     * @return la coordonées suivant y en cartésian
+     */
+    private double cartY(double lat, double lon){
+        double rayT = 6300000;
+
+        return rayT * Math.sin(lat) * Math.sin(lon);
+    }
+
+
+
     /**
      * Calcule la différence d'angle entre .
      *
@@ -296,8 +324,9 @@ public class OptimisationAndFormating {
             if (!Objects.equals(current_bus_pos, "")) {
                 current_bus_pos = current_bus_pos.substring(1, current_bus_pos.length() - 1);
                 String[] dos = current_bus_pos.split(",");
-                double x = Double.parseDouble(dos[0]);
-                double y = Double.parseDouble(dos[1]);
+                // ici nous récupperrons x et y qui sont leurs repprésentation
+                double x = cartX(Double.parseDouble(dos[0]), Double.parseDouble(dos[0])) ; 
+                double y = cartY(Double.parseDouble(dos[0]), Double.parseDouble(dos[0]));
                 //System.out.println("DEBUG " + src_lat + " " + src_lon);
 
                 double proch1 = 1000;
@@ -309,8 +338,8 @@ public class OptimisationAndFormating {
                 for (int i = 0; i < arrangedCoords.size(); i++) {
                     String element = arrangedCoords.get(i);
                     String[] element_splited = element.split(",");
-                    double x1 = Double.parseDouble(element_splited[0]);
-                    double y1 = Double.parseDouble(element_splited[1]);
+                    double x1 = cartX(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
+                    double y1 = cartY(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
 
                     double dist = distance(x, y, x1, y1);
 
@@ -326,29 +355,29 @@ public class OptimisationAndFormating {
                     if (proch1_ind != 0 && proch2_ind != 0) {
                         element = arrangedCoords.get(proch1_ind);
                         element_splited = element.split(",");
-                        x1 = Double.parseDouble(element_splited[0]);
-                        y1 = Double.parseDouble(element_splited[1]);
+                        x1 =  cartX(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
+                        y1 =  cartY(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
                         double t1 = x - x1;
                         double t2 = y - y1;
 
                         element = arrangedCoords.get(proch1_ind - 1);
                         element_splited = element.split(",");
-                        double x2 = Double.parseDouble(element_splited[0]);
-                        double y2 = Double.parseDouble(element_splited[1]);
+                        double x2 = cartX(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
+                        double y2 = cartY(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
                         double t3 = x2 - x1;
                         double t4 = y2 - y1;
 
                         element = arrangedCoords.get(proch2_ind);
                         element_splited = element.split(",");
-                        x1 = Double.parseDouble(element_splited[0]);
-                        y1 = Double.parseDouble(element_splited[1]);
+                        x1 = cartX(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
+                        y1 = cartY(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
                         double t1b = x - x1;
                         double t2b = y - y1;
 
                         element = arrangedCoords.get(proch1_ind - 1);
                         element_splited = element.split(",");
-                        x2 = Double.parseDouble(element_splited[0]);
-                        y2 = Double.parseDouble(element_splited[1]);
+                        x2 = cartX(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
+                        y2 = cartY(Double.parseDouble(element_splited[0]), Double.parseDouble(element_splited[1]));
                         double t3b = x2 - x1;
                         double t4b = y2 - y1;
                         if (diff_abs_angle(t1, t2, t3, t4) < diff_abs_angle(t1b, t2b, t3b, t4b)) {
@@ -365,7 +394,7 @@ public class OptimisationAndFormating {
             }
 
         }
-        System.out.println("ici je renoie " + out_ind);
+        System.out.println("ici je renvoie " + out_ind);
         return beg + ";" + out_ind;
     }
 }
