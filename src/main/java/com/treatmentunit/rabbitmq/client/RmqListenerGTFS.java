@@ -93,7 +93,7 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
                     databaseBinding.requestInsert("TRUNCATE stops");
                     databaseBinding.requestInsert("TRUNCATE stop_times");
                     databaseBinding.requestInsert("TRUNCATE trips");
-                    databaseBinding.requestInsert("TRUNCATE simulation_en_toute_heure");
+                    databaseBinding.requestInsert("DROP TABLE simulation_en_toute_heure");
 
                     File folder = new File(FILE_NAME_DEZIP);
                     if (folder.isDirectory()) {
