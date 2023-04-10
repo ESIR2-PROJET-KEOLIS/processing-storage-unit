@@ -97,12 +97,15 @@ public class APIController {
         */
 
         String sql_req = "SELECT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day  + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
-
+        String theorical_location = "";
         //System.out.println(sql_req);
 
         ArrayList<ArrayList<String>> val = databaseBinding.requestFetchNColumns(sql_req);
-        String theorical_location = optAndForm.getTheoricalLocationPerHour(val, hour);
-
+        if(val.size() != 0) {
+            theorical_location = optAndForm.getTheoricalLocationPerHour(val, hour);
+        } else {
+            return "[!] Empty return, can't process theorical positions on API call.";
+        }
         return theorical_location;
     }
 }

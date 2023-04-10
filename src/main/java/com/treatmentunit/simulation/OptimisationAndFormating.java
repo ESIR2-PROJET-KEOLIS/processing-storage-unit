@@ -334,7 +334,7 @@ public class OptimisationAndFormating {
         return ret;
     }
 
-    public String getTheoricalLocationPerHour(ArrayList<ArrayList<String>> input_tab, String target) {
+    synchronized public String getTheoricalLocationPerHour(ArrayList<ArrayList<String>> input_tab, String target) {
 
         ArrayList<LocalTime> _LOCALTIMES_ = new ArrayList<>();
         // Hour format : "14:25:00"

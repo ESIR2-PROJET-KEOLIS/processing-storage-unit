@@ -87,8 +87,10 @@ public class DatabaseBinding {
 
                 return fetched;
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                Thread.sleep(12);
+                //throw new RuntimeException(e);
             }
+            return fetched;
         }
     }
 
