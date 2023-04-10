@@ -340,7 +340,7 @@ public class OptimisationAndFormating {
         // Hour format : "14:25:00"
         //System.out.println(input_tab.size());
 
-        String res = "{";
+        String res = "[\n";
 
             for(int i = 0 ; i < input_tab.size() ; i++) {
 
@@ -406,7 +406,7 @@ public class OptimisationAndFormating {
                 //System.out.println("LA COOORD : " + initial_path.get(index_of_nearest));
                 res += "\t\t\"position\" : " + initial_path.get(index_of_nearest).toString() + ",\n";
                 //res += "\t\t\"position_opti\" : [" + OPTIMISED_PATH.get(index_of_nearest_opti).toString() + "],\n";
-                res += "\t\t\"index_in_opti\" : " + index_of_nearest_opti + ",\n";
+                //res += "\t\t\"index_in_opti\" : " + index_of_nearest_opti + ",\n";
 
                 //System.out.println("TEST: " + initial_path.get(index_of_nearest).toString());
 
@@ -425,7 +425,7 @@ public class OptimisationAndFormating {
 
             }
 
-            res += "}";
+            res += "]";
 
             return res;
     }
