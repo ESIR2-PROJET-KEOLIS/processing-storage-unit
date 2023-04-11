@@ -96,7 +96,7 @@ public class APIController {
                 """;
         */
 
-        String sql_req = "SELECT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day  + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
+        String sql_req = "SELECT DISTINCT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day  + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
         String theorical_location = "";
         //System.out.println(sql_req);
 

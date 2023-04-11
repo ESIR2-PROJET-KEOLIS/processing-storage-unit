@@ -413,6 +413,8 @@ public class OptimisationAndFormating {
                 String r = initial_path.get(index_of_nearest).toString().substring(1, initial_path.get(index_of_nearest).toString().length()-1);
                 String[] reverse = r.split(",");
 
+
+                // !! getOutput() se charge de l'optimisation !!
                 res += "\t\t\"next_index_opti\" : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]").split(";")[1];
 
                 //System.out.println("GetOutput renvoie le résultat suivant : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]"));
