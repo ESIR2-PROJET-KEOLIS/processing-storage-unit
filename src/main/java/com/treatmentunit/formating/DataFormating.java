@@ -24,6 +24,8 @@ public class DataFormating {
     static HashMap<String, Integer> BusNumber = new HashMap<>();
     private DatabaseBinding databaseBinding = new DatabaseBinding();
     private OptimisationAndFormating optimisationAndFormating = new OptimisationAndFormating();
+    private static HashMap<String, Integer> busDelays = new HashMap<>();
+
 
     // FormatedString Components
     public String FormatedStringHeader = """
@@ -130,6 +132,10 @@ public class DataFormating {
         return res;
     }
 
+    public static HashMap<String, Integer> getDelaysHashMap() {
+        return busDelays;
+    }
+
 
     public String formatReceivedJSON(String src) throws SQLException, IOException, InterruptedException {
         System.out.println("[*] Formatting ...");
@@ -154,13 +160,16 @@ public class DataFormating {
             System.out.println("Number of entries in the array: " + array.length());
             boolean empty = true;
             for (int i = 0; i < array.length(); i++) {
-                if (array.getJSONObject(i).getJSONObject("fields").has("nomcourtligne") && array.getJSONObject(i).getJSONObject("fields").has("coordonnees")) {
+                if (array.getJSONObject(i).getJSONObject("fields").has("nomcourtligne") && array.getJSONObject(i).getJSONObject("fields").has("coordonnees") && array.getJSONObject(i).getJSONObject("fields").has("ecartsecondes")) {
                     if (!empty) {
                         FormatedStringContent += ",\n";
                     }
                     String nom_bus = array.getJSONObject(i).getJSONObject("fields").getString("nomcourtligne");
                     JSONArray array_coords = array.getJSONObject(i).getJSONObject("fields").getJSONArray("coordonnees");
                     String sens = String.valueOf(array.getJSONObject(i).getJSONObject("fields").getInt("sens"));
+
+                    // Pour retard moyen -> Simulation de flux passagers.
+                    Integer retard_en_secondes = Integer.parseInt(String.valueOf(array.getJSONObject(i).getJSONObject("fields").getInt("ecartsecondes")));
 
                     if (array_coords != null && array_coords.length() == 2) {
                         float longitude = array_coords.getFloat(1);
@@ -173,6 +182,8 @@ public class DataFormating {
 
                         String returned = optimisationAndFormating.getOutput(single_val, "["+ latitude + "," + longitude +"]");
                         String[] returned_splited = returned.split(";");
+
+                        busDelays.put(nom_bus, retard_en_secondes);
 
                         String FormatedStringFeature = """
                                 {
