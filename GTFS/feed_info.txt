@@ -1,2 +1,0 @@
-feed_publisher_name,feed_publisher_url,feed_lang,feed_start_date,feed_end_date,feed_version
-"Keolis Rennes","https://data.explore.star.fr","FR","20230319","20230416","Version 2022.7.1.1 - Du 19/03/2023 au 16/04/2023"
