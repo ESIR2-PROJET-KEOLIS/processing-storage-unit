@@ -171,7 +171,6 @@ public class APIController {
         JSONObject api_response = new JSONObject(reponse);
 
         // TEST
-
         return "{}";
     }
 
