@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,7 +24,7 @@ public class OptimisationAndFormating {
      * @param d -> Long2 d
      * @return distance en mètres
      */
-    private static double distanceViaLatEtLong(double a, double b, double c, double d) {
+    public static double distanceViaLatEtLong(double a, double b, double c, double d) {
         double resultat = 0;
         double R = 6371 * 1000;
         double phi_a_rad = a * (Math.PI / 180);
@@ -38,6 +39,23 @@ public class OptimisationAndFormating {
 
         resultat = R * f2;
         return resultat;
+    }
+
+    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+        double R = 6371;  // Earth's radius in kilometers
+
+        double lat1_rad = Math.toRadians(lat1);
+        double lon1_rad = Math.toRadians(lon1);
+        double lat2_rad = Math.toRadians(lat2);
+        double lon2_rad = Math.toRadians(lon2);
+
+        double delta_lat = lat2_rad - lat1_rad;
+        double delta_lon = lon2_rad - lon1_rad;
+
+        double a = Math.pow(Math.sin(delta_lat / 2), 2) + Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.pow(Math.sin(delta_lon / 2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
     }
 
     private static ArrayList<String> pointsBetweenTwoCoordinates(double a, double b, double c, double d) {

@@ -1,11 +1,16 @@
 package com.treatmentunit.restservice;
 
 import com.treatmentunit.database.DatabaseBinding;
+import com.treatmentunit.formating.DataFormating;
+import com.treatmentunit.simulation.HttpAPIRequests;
 import com.treatmentunit.simulation.OptimisationAndFormating;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,9 +19,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
 
 @RestController
 public class APIController {
@@ -73,29 +79,6 @@ public class APIController {
     public static String theoricPosition(@RequestParam(value = "line") String line, @RequestParam(value = "hour") String hour, @RequestParam(value = "day") String day) throws SQLException, InterruptedException {
 
         String ret = "";
-
-
-        /**
-         * CREATION DE TABLE :
-         *
-         *
-         * CREATE TABLE simulation_en_tout_heure AS SELECT * FROM (SELECT t.trip_id, min_departure_time, max_arrival_time, pg.tab_coordonnes, r.route_short_name, monday, tuesday, wednesday, thursday, friday, saturday, sunday
-         * FROM (SELECT trip_id, MIN(departure_time) AS min_departure_time, MAX(arrival_time) AS max_arrival_time FROM stop_times
-         * GROUP BY trip_id) as custom, trips t, calendar c, routes r, parcours_geo pg
-         * WHERE custom.trip_id = t.trip_id AND t.service_id = c.service_id AND t.route_id = r.route_id AND c.service_id = t.service_id AND shape_id = pg.parcours_lignes_bus_star_id) as cus;
-         */
-
-        /* String sql_req = """
-                SELECT * FROM (SELECT t.trip_id, min_departure_time, max_arrival_time, pg.tab_coordonnes 
-                FROM (SELECT trip_id, MIN(departure_time) AS min_departure_time, MAX(arrival_time) AS max_arrival_time FROM stop_times 
-                GROUP BY trip_id) as custom, trips t, calendar c, routes r, parcours_geo pg 
-                WHERE custom.trip_id = t.trip_id AND t.service_id = c.service_id AND """ + " " + day + " = '1' " + """ 
-                AND t.route_id = r.route_id AND c.service_id = t.service_id AND shape_id = pg.parcours_lignes_bus_star_id 
-                AND r.route_short_name = """ + "'" + line + "') as cus WHERE TIME('" + " " + hour +  "')" + """ 
-                BETWEEN min_departure_time and max_arrival_time;
-                """;
-        */
-
         String sql_req = "SELECT DISTINCT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day  + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
         String theorical_location = "";
         //System.out.println(sql_req);
@@ -108,4 +91,88 @@ public class APIController {
         }
         return theorical_location;
     }
+
+
+    @GetMapping("/flowsimulation")
+     public static synchronized String getSimulationFlow(@RequestParam("line") String line, @RequestParam("sens") String sens, @RequestParam("day") String day, @RequestParam("hour") String hour) throws SQLException, InterruptedException, IOException {
+
+        String ret = "{ \"simulation_flow\" = ";
+
+        ArrayList<String> days = new ArrayList<>(Arrays.asList("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"));
+
+        // ---------------------------- Not on start ! ----------------------------
+
+        // Number of buses
+        String sql_req_bus_count = "SELECT DISTINCT COUNT(*) FROM simulation_en_toute_heure WHERE " + day + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time AND route_short_name = '" + line + "';\n";
+        String fetched = databaseBinding.requestFetchSingleValue(sql_req_bus_count);
+        double number_of_buses_currently = (float)Double.parseDouble(fetched);
+
+        // Mean of Bus Delays
+        HashMap<String, Integer> delaysHashmap = DataFormating.getDelaysHashMap();
+        int size = delaysHashmap.size();
+        //System.out.println("SIIIIZIZZZE : " + size);
+        int additionOfDelays = 0;
+        Set<String> keys = delaysHashmap.keySet();
+        for(String value : keys) {
+            additionOfDelays += delaysHashmap.get(value);
+        }
+
+        // Line Length
+        String sql_req_line_length = "SELECT DISTINCT longueur FROM `parcours_lignes_bus_star` WHERE nomcourtligne = '" + line + "' AND sens = '" + sens + "' AND type='Principal'";
+        double fetched_line_length = (float)Double.parseDouble(databaseBinding.requestFetchSingleValue(sql_req_line_length));
+
+        // Average distance
+        String theoric_pos = theoricPosition(line, hour, day);
+        JSONArray array_of_elements = new JSONArray(theoric_pos);
+        int additionOfDistances = 0;
+        int number_of_buses = array_of_elements.length();
+        double last_lat = 0;
+        double last_lng = 0;
+        for(int i = 0 ; i < number_of_buses ; i++) {
+            JSONArray coords = array_of_elements.getJSONObject(i).getJSONArray("position");
+            if(i>1) {
+                double lat = coords.getFloat(1);
+                double lng = coords.getFloat(0);
+                String frmtd_coord = lat + "," + lng;
+                additionOfDistances += optAndForm.haversine(last_lat, last_lng, lat, lng);
+                last_lat = lat;
+                last_lng = lng;
+            }
+        }
+
+        double avg_distance = 0;
+        double avg_time_diff = 0;
+        double bus_count = 0;
+        double lengthOfLine = 0;
+        double day_d = 0;
+
+        try {
+            avg_distance = (additionOfDistances/number_of_buses);
+            avg_time_diff = additionOfDelays/size;
+            bus_count = number_of_buses_currently;
+            lengthOfLine = fetched_line_length;
+            day_d = (double)days.indexOf(day);
+
+        } catch (ArithmeticException e) {
+            System.out.println("[!] Veuillez relancer le collecteur !");
+            return "[/!\'] !!! Veuillez relancer le collecteur !!!";
+        }
+
+        ret += "}";
+
+
+        String debug = "avg_distance = " + avg_distance + " / avg_time_diff = " + avg_time_diff + " / bus_count = " + bus_count + " / lengthOfLine = " + lengthOfLine + " / day_d = " + day_d;
+        System.out.println(debug);
+
+        HttpAPIRequests httpAPIRequests = new HttpAPIRequests();
+        String reponse = httpAPIRequests.requestToAIAPIforFlowSimulation(line, sens, avg_distance, avg_time_diff, number_of_buses, lengthOfLine, day_d);
+        //System.out.println("REPOOOOONSE DE AIIII : " + reponse);
+
+        JSONObject api_response = new JSONObject(reponse);
+
+        // TEST
+
+        return "{}";
+    }
+
 }
