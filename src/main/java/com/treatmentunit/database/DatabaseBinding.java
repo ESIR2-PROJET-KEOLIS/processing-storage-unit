@@ -18,7 +18,6 @@ public class DatabaseBinding {
 
         while(!connected_to_db_server) {
             try {
-
                 String host = System.getenv("DB_HOST");
                 if(host == null) host = "localhost";
                 System.out.println(host);
@@ -35,7 +34,6 @@ public class DatabaseBinding {
 
             } catch (ClassNotFoundException | SQLException e) {
                 System.out.println("[!] Connexion impossible.");
-                throw new RuntimeException(e);
             }
         }
     }

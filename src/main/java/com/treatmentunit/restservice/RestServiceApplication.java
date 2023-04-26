@@ -31,9 +31,7 @@ public class RestServiceApplication {
 				                                                           |_|            2022-2023                   |___/                    \s			
 				""");
 
-		System.out.println("[*] Delaying waiting for BDD ... ");
 
-		Thread.sleep(40000);
 
 		System.out.println("[*] Running ... ");
 		DatabaseBinding.connectToSqlSocket();
