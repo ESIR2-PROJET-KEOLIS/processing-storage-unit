@@ -34,6 +34,11 @@ public class DatabaseBinding {
 
             } catch (ClassNotFoundException | SQLException e) {
                 System.out.println("[!] Connexion impossible.");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e2) {
+                    System.out.println("[!] InterruptedException occured.");
+                }
             }
         }
     }
