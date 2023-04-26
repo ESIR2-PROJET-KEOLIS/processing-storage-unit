@@ -17,7 +17,7 @@ public class RestServiceApplication {
 	public static RmqListenerGTFS rmqListenerGTFS = null;
 	public static RmqListenerPARCOURS rmqListenerPARCOURS = null;
 
-	public static void main(String[] args) throws IOException, TimeoutException {
+	public static void main(String[] args) throws IOException, TimeoutException, InterruptedException {
 		SpringApplication.run(RestServiceApplication.class, args);
 
 		System.out.println("""
@@ -30,6 +30,10 @@ public class RestServiceApplication {
 				                                                           | |       Yazid & Valere - ESIR PROJ-SI     __/ |                   \s
 				                                                           |_|            2022-2023                   |___/                    \s			
 				""");
+
+		System.out.println("[*] Delaying waiting for BDD ... ");
+
+		Thread.sleep(40000);
 
 		System.out.println("[*] Running ... ");
 		DatabaseBinding.connectToSqlSocket();
