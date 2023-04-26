@@ -12,27 +12,31 @@ public class DatabaseBinding {
     private ResultSet result;
     private boolean requested;
     private static Statement statement;
+    private static boolean connected_to_db_server = false;
 
     public static void connectToSqlSocket() {
-        try {
-            String host = System.getenv("DB_HOST");
-            if(host == null) host = "localhost";
-            System.out.println(host);
-            String env_port = System.getenv("DB_PORT");
-            int port = 6033;
-            if(env_port != null) port = Integer.parseInt(env_port);
-            String db_name = "mydb";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("[*] Tentative de connexion à la base de données...");
-            con = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+db_name+"?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true", "root", "root");
-            statement = con.createStatement();
-            System.out.println("[*] Connexion réussie à la base de données.");
 
-            //boolean let = statement.execute("INSERT INTO calendar_dates VALUES (0, 21/02/2022, 'test')");
+        while(!connected_to_db_server) {
+            try {
 
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("[!] Erreur de connexion à la base de données.");
-            throw new RuntimeException(e);
+                String host = System.getenv("DB_HOST");
+                if(host == null) host = "localhost";
+                System.out.println(host);
+                String env_port = System.getenv("DB_PORT");
+                int port = 6033;
+                if(env_port != null) port = Integer.parseInt(env_port);
+                String db_name = "mydb";
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                System.out.println("[*] Tentative de connexion à la base de données..");
+                con = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+db_name+"?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true", "root", "root");
+                statement = con.createStatement();
+                System.out.println("[*] Connexion réussie à la base de données.");
+                connected_to_db_server = true;
+
+            } catch (ClassNotFoundException | SQLException e) {
+                System.out.println("[!] Connexion impossible.");
+                throw new RuntimeException(e);
+            }
         }
     }
 
