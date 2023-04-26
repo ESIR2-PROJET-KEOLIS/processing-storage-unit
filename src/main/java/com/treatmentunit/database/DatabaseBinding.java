@@ -67,7 +67,7 @@ public class DatabaseBinding {
     */
 
 
-    public synchronized ArrayList<ArrayList<String>> requestFetchNColumns(String query) throws SQLException, InterruptedException {
+    public ArrayList<ArrayList<String>> requestFetchNColumns(String query) throws SQLException, InterruptedException {
         ArrayList<ArrayList<String>> fetched = new ArrayList<>();
         synchronized (fetched) {
             try {
@@ -94,7 +94,7 @@ public class DatabaseBinding {
         }
     }
 
-    public synchronized String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
+    public String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
         ArrayList<String> fetched = new ArrayList<>();
         String val = "";
         synchronized (fetched) {
