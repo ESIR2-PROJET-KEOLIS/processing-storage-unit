@@ -87,11 +87,9 @@ public class OptimisationAndFormating {
                 String[] splitedCoordsList = input.split("],");
                 for (String s : splitedCoordsList) {
                     String splitedCoordsSub = s.trim().substring(1);
-                    //System.out.println(splitedCoordsSub);
                     String[] splitedCoords = splitedCoordsSub.split(",");
                     String formated = splitedCoords[1] + "," + splitedCoords[0];
                     formated = formated.trim();
-                    //System.out.println("formated out : " + formated);
 
                     int DELTA = 10;
                     if (distanceViaLatEtLong(Double.parseDouble(splitedCoords[1]), lastPoint_lat, Double.parseDouble(splitedCoords[0]), lastPont_long) > DELTA) {

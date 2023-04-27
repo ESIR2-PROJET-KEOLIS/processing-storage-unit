@@ -53,27 +53,6 @@ public class DatabaseBinding {
         }
     }
 
-    /*
-    public ArrayList<String> requestFetchSingleValue(String query) throws SQLException, InterruptedException {
-        ArrayList<String> fetched = new ArrayList<>();
-            try {
-                result = statement.executeQuery(query);
-                if(result.next()) {
-                    ResultSetMetaData metadata = result.getMetaData();
-                    int col_count = metadata.getColumnCount();
-                    for (int i = 1; i <= col_count; i++) {
-                        fetched.add(result.getString(i));
-                    }
-                }
-            } catch (SQLException e) {
-                Thread.sleep(12);
-            }
-
-        return fetched;
-    }
-    */
-
-
     public ArrayList<ArrayList<String>> requestFetchNColumns(String query) throws SQLException, InterruptedException {
         ArrayList<ArrayList<String>> fetched = new ArrayList<>();
         synchronized (fetched) {
@@ -89,13 +68,11 @@ public class DatabaseBinding {
                         entry.add(result.getString(i));
                     }
                     fetched.add(entry);
-                    //System.out.println(entry.get(0)+"\n");
                 }
 
                 return fetched;
             } catch (SQLException e) {
                 Thread.sleep(12);
-                //throw new RuntimeException(e);
             }
             return fetched;
         }

@@ -90,9 +90,6 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
 
                 }
 
-                /**
-                 * https://data.explore.star.fr/api/records/1.0/search/?dataset=tco-bus-topologie-parcours-td&q=&rows=50
-                 */
 
                 giga_insert = new StringBuilder(giga_insert.substring(0, giga_insert.length() - 2));
                 coords_insert = new StringBuilder(coords_insert.substring(0, coords_insert.length()-2));

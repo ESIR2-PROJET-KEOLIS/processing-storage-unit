@@ -37,7 +37,6 @@ public class RmqPublisher {
     }
 
     public void PublishQueue(String msg, Channel ch) throws IOException, TimeoutException {
-        //Channel channel = setUpPublisherConnectionAndChannel();
         ch.queueDeclare(TARGET_QUEUE, true, false, false, null);
         ch.basicPublish("", TARGET_QUEUE, null, msg.getBytes(StandardCharsets.UTF_8));
     }
