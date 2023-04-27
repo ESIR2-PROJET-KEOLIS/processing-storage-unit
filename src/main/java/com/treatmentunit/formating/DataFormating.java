@@ -19,6 +19,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
+/**
+ * La classe DataFormating sert a la manipulation et réécriture de différent JSON reçu et envoyé dans le process-unit
+ */
 public class DataFormating {
 
     static HashMap<String, Integer> BusNumber = new HashMap<>();
@@ -38,6 +41,12 @@ public class DataFormating {
                 ]}
                 """;
 
+    /**
+     *  Renvoie dans un String tout le contenue de file
+     * @param file un chemin
+     * @return String contenant ce qu'il y a dans le fichier file
+     * @throws Exception
+     */
     public static String readFileAsString(String file)throws Exception {
         return new String(Files.readAllBytes(Paths.get(file)));
     }
@@ -52,6 +61,11 @@ public class DataFormating {
         System.out.println(dataFormating.formatReceivedJSON(json));
     }
 
+    /**
+     * Réecrit un JSONObject en ArrayList< String>
+     * @param src prend un JSONObject
+     * @return ArrayList< String>
+     */
     public ArrayList<String> formatReceivedJSON_PARCOURS(JSONObject src) {
         ArrayList<String> res = new ArrayList<>();
 
@@ -136,7 +150,14 @@ public class DataFormating {
         return busDelays;
     }
 
-
+    /**
+     * Formate (JSON) le src pour l'envoie de position theorique
+     * @param src String
+     * @return String formaté (JSON)
+     * @throws SQLException
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public String formatReceivedJSON(String src) throws SQLException, IOException, InterruptedException {
         System.out.println("[*] Formatting ...");
 
@@ -264,6 +285,10 @@ public class DataFormating {
     }
 
     // For future purposes
+
+    /**
+     * Print dans la console BusNumber
+     */
     public void printHashMap() {
         for(String name : BusNumber.keySet()) {
             String key = name;
