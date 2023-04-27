@@ -14,10 +14,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
 
 public class DataFormating {
 
@@ -185,6 +185,48 @@ public class DataFormating {
 
                         busDelays.put(nom_bus, retard_en_secondes);
 
+                        HashMap<String, Double> retrieved_hashmap_from_api_controller = null;
+                        String filling_level = "N/A";
+                        double filling_proba = 0.0;
+                        LocalTime currentTime = LocalTime.now();
+                        LocalDate currentDate = LocalDate.now();
+                        int hour = currentTime.getHour();
+                        int minute = currentTime.getMinute();
+                        int second = currentTime.getSecond();
+                        int day_of_week = currentDate.getDayOfWeek().getValue();
+                        ArrayList<String> days = new ArrayList<>(Arrays.asList("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"));
+                        int day_of_week_int_value = 0;
+
+                        // LIMITATION A LA LIGNE C1
+                        if(Objects.equals(nom_bus, "C1") && Objects.equals(sens, "0")) {
+                            String concated_hour = String.valueOf(hour);
+                            String concated_minute = String.valueOf(minute);
+                            String concated_seconds = String.valueOf(second);
+
+                            if(hour <= 9) {
+                                concated_hour = "0".concat(String.valueOf(hour));
+                            }
+
+                            if(minute <= 9) {
+                                concated_minute = "0".concat(String.valueOf(minute));
+                            }
+
+                            if(second <= 9) {
+                                concated_seconds = "0".concat(String.valueOf(second));
+                            }
+
+                            String _concated_ = String.valueOf(concated_hour) + ":" + concated_minute + ":" + concated_seconds;
+                            retrieved_hashmap_from_api_controller = APIController.getSimulationFlow(nom_bus, sens, days.get(day_of_week-1), _concated_);
+                            if(retrieved_hashmap_from_api_controller != null) {
+                                for (Map.Entry<String, Double> entry : retrieved_hashmap_from_api_controller.entrySet()) {
+                                    if (entry.getValue() > filling_proba) {
+                                        filling_proba = entry.getValue();
+                                        filling_level = entry.getKey();
+                                    }
+                                }
+                            }
+                        }
+
                         String FormatedStringFeature = """
                                 {
                                 "type" : "Feature",
@@ -193,7 +235,9 @@ public class DataFormating {
                                         "icon" : "bus",
                                         "line" : \" """ + nom_bus + "\"" + ",\n"+ """
                                         \t"nextindex" : \"""" + returned_splited[1] + "\",\n" + """
-                                        \t"sens" : \"""" + sens + "\"" + """ 
+                                        \t"sens" : \"""" + sens + "\",\n" + """
+                                        \t"filling_level" : \"""" + filling_level + "\",\n" + """
+                                        \t"filling_proba" : \"""" + filling_proba + "\"\n" + """
                                 \n\t},
                                 \t"geometry" : {
                                    \t"type" : "Point", 

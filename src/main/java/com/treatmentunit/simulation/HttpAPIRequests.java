@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,51 +23,54 @@ public class HttpAPIRequests {
             double day
     ) throws IOException {
 
-        String url = "http://localhost:5001/predict/Nombus=" + line + "&Sens=" + sens;
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", "Java HttpURLConnection");
-        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        try {
+            String url = "http://localhost:5001/predict/Nombus=" + line + "&Sens=" + sens;
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "Java HttpURLConnection");
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-        Map<String, Double> data = Map.of(
-                "avg_distance", avg_distance,
-                "avg_time_diff", avg_time_diff,
-                "bus_count", bus_count,
-                "length", lengthOfLine,
-                "day", day
-        );
+            Map<String, Double> data = Map.of(
+                    "avg_distance", avg_distance,
+                    "avg_time_diff", avg_time_diff,
+                    "bus_count", bus_count,
+                    "length", lengthOfLine,
+                    "day", day
+            );
 
-        StringBuilder dataString = new StringBuilder();
-        for (Map.Entry<String, Double> entry : data.entrySet()) {
-            if (dataString.length() != 0) {
-                dataString.append("&");
+            StringBuilder dataString = new StringBuilder();
+            for (Map.Entry<String, Double> entry : data.entrySet()) {
+                if (dataString.length() != 0) {
+                    dataString.append("&");
+                }
+                dataString.append(entry.getKey());
+                dataString.append("=");
+                dataString.append(entry.getValue());
             }
-            dataString.append(entry.getKey());
-            dataString.append("=");
-            dataString.append(entry.getValue());
-        }
 
-        con.setDoOutput(true);
-        try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-            byte[] dataBytes = dataString.toString().getBytes(StandardCharsets.UTF_8);
-            wr.write(dataBytes);
-        }
-
-        // Read response from server
-        StringBuilder response = new StringBuilder();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+            con.setDoOutput(true);
+            try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
+                byte[] dataBytes = dataString.toString().getBytes(StandardCharsets.UTF_8);
+                wr.write(dataBytes);
             }
+
+            // Read response from server
+            StringBuilder response = new StringBuilder();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+            }
+            return response.toString();
+        } catch (ConnectException ce) {
+            System.out.println("[!] Erreur lors de la connexion à l'API AI ! Veuillez relancer le module.");
+            return "CONNECTION ERROR !";
         }
 
-        System.out.println(con.getResponseCode());
-        System.out.println(response.toString());
-
-        return response.toString();
-
+        //System.out.println(con.getResponseCode());
+        //System.out.println(response.toString());
     }
 
 }
