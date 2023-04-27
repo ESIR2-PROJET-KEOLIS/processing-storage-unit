@@ -21,6 +21,11 @@ import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Classe qui gère la queue "GTFS" de rabbitMQ
+ * Pour récupérer le lien de téléchargement du GTFS du réseau stars
+ * Et remplie la BDD a l'aide du GTFS
+ */
 public class RmqListenerGTFS extends RmqListener implements Runnable{
 
     private final static String QUEUE_NAME = "GTFS";

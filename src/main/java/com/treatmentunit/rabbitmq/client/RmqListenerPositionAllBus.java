@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Classe qui gère la queue "PositionAllBus" de rabbitMQ
+ * Utilsé pour récupérer en direct la position des bus
+ */
 public class RmqListenerPositionAllBus extends RmqListener implements Runnable{
 
     private final static String QUEUE_NAME = "PositionAllBus";
