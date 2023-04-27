@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 // DATABASE BINDING WITH "MYDB" ONLY !!
 
+/**
+ * Classe DatabaseBinding sert à la manipulation de la base de donnée.
+ */
 public class DatabaseBinding {
 
     private static Connection con;
@@ -14,6 +17,9 @@ public class DatabaseBinding {
     private static Statement statement;
     private static boolean connected_to_db_server = false;
 
+    /**
+     * La méthode connectToSqlSocket nous connect à la base de donnée
+     */
     public static void connectToSqlSocket() {
 
         while(!connected_to_db_server) {
@@ -43,6 +49,10 @@ public class DatabaseBinding {
         }
     }
 
+    /**
+     * La méthode requestInsert envoie une requete d'insertion a la base de donnée
+     * @param query est une requete sql d'insertion
+     */
     public void requestInsert(String query) {
         try {
             requested = statement.execute(query);
@@ -53,6 +63,14 @@ public class DatabaseBinding {
         }
     }
 
+    /**
+     * La méthode requestFetchNColumns envoie une requete a la base de donnée est renvoie la réponse sous forme
+     * de tableau de tableaux de chaine de caractère
+     * @param query est une requete sql
+     * @return ArrayList< ArrayList < String>>  repprésentant les colonnes et les lignes en sortie de la requete
+     * @throws SQLException
+     * @throws InterruptedException
+     */
     public ArrayList<ArrayList<String>> requestFetchNColumns(String query) throws SQLException, InterruptedException {
         ArrayList<ArrayList<String>> fetched = new ArrayList<>();
         synchronized (fetched) {
@@ -78,6 +96,14 @@ public class DatabaseBinding {
         }
     }
 
+    /**
+     * la méthode requestFetchSingleValue envoie une requête à la base de donnée et renvoie une chaine de caractère contenant l'élèment dans
+     * la premiere ligne et premiere colonne  de la réponse
+     * @param query une requête sql
+     * @return String contenant la valeur dans la premiere ligne et premiere colum de la réponse
+     * @throws SQLException
+     * @throws InterruptedException
+     */
     public String requestFetchSingleValue(String query) throws SQLException, InterruptedException {
         ArrayList<String> fetched = new ArrayList<>();
         String val = "";
