@@ -513,10 +513,13 @@ public class APIController {
         String lineLengthValue = databaseBinding.requestFetchSingleValue(sql_req_line_length);
         double fetched_line_length = StringUtils.isNotBlank(lineLengthValue) ? Double.parseDouble(lineLengthValue) : 0.0;
 
+        /*
         System.out.println("------------------------------------------------");
         System.out.println("sql_req_line_length: " + sql_req_line_length);
         System.out.println("fetched_line_length: " + fetched_line_length);
         System.out.println("------------------------------------------------");
+        */
+
 
         // Average distance
         String theoric_pos = theoricPosition(line, hour, day);
@@ -562,11 +565,13 @@ public class APIController {
         }
 
         String debug = "avg_distance = " + avg_distance + " / avg_time_diff = " + avg_time_diff + " / bus_count = " + bus_count + " / lengthOfLine = " + lengthOfLine + " / day_d = " + day_d;
-        System.out.println(debug);
+        //System.out.println(debug);
 
         HttpAPIRequests httpAPIRequests = new HttpAPIRequests();
         String reponse = httpAPIRequests.requestToAIAPIforFlowSimulation(line, sens, avg_distance, avg_time_diff, number_of_buses, lengthOfLine, day_index_for_ai);
         //System.out.println("REPOOOOONSE DE AIIII : " + reponse);
+
+         System.out.println("[DEBUG] API Response  : " + reponse);
 
          if(reponse.charAt(0) == '{') {
              JSONObject api_response = new JSONObject(reponse);
@@ -574,7 +579,7 @@ public class APIController {
 
              for(String key : api_response.keySet()) {
                  System.out.println("key: " + key);
-                 System.out.println("value : " + filling_level_and_proba.get(key));
+                 System.out.println("value : " + api_response.getDouble(key));
                  BigDecimal bdValue = (BigDecimal) api_response.get(key);
                  double doubleValue = bdValue.doubleValue();
                  filling_level_and_proba.put(key, doubleValue);

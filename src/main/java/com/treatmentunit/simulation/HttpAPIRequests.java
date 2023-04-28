@@ -38,10 +38,21 @@ public class HttpAPIRequests {
             double day
     ) throws IOException {
 
+        boolean connected = false;
+
         try {
-            String url = "http://localhost:5001/predict/Nombus=" + line + "&Sens=" + sens;
+
+            String host = System.getenv("API_IA_HOST");
+            if(host == null) host = "localhost";
+            String env_port = System.getenv("API_IA_PORT");
+            if(env_port == null) env_port = "5001";
+
+            //String url = "http://localhost:5001/predict/Nombus=" + line + "&Sens=" + sens;
+            String url = "http://" + host + ":" + env_port + "/predict/Nombus=" + line + "&Sens=" + sens;
+
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", "Java HttpURLConnection");
             con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -80,7 +91,7 @@ public class HttpAPIRequests {
             }
             return response.toString();
         } catch (ConnectException ce) {
-            System.out.println("[!] Erreur lors de la connexion à l'API AI ! Veuillez relancer le module.");
+            System.out.println("[!] Erreur lors de la connexion à l'API AI ! Veuillez relanccer le module.");
             return "CONNECTION ERROR !";
         }
 
