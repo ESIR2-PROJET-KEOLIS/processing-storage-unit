@@ -3,7 +3,16 @@ package com.treatmentunit.utils;
 import java.io.*;
 import java.util.zip.*;
 
+/**
+ * Classe utilisé pour manipulé les .zip
+ */
 public class ZipExtractor {
+
+    /**
+     * Constructeur
+     * @param target
+     * @param destination
+     */
     public ZipExtractor(String target, String destination) {
         String zipFilePath = target;
         String destDir = destination;
@@ -41,6 +50,12 @@ public class ZipExtractor {
         }
     }
 
+    /**
+     *
+     * @param zipInputStream
+     * @param filePath
+     * @throws IOException
+     */
     private void extractFile(ZipInputStream zipInputStream, String filePath) throws IOException {
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
 
