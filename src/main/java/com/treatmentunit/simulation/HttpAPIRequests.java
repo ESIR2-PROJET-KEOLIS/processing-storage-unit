@@ -11,8 +11,23 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+/**
+ * Classe pour les requetes à l'API contenant l'IA
+ */
 public class HttpAPIRequests {
 
+    /**
+     * Méthode pour appeller l'IA
+     * @param line
+     * @param sens
+     * @param avg_distance
+     * @param avg_time_diff
+     * @param bus_count
+     * @param lengthOfLine
+     * @param day
+     * @return Une string contenant les resultats de l'IA. Ou "CONNECTION ERROR !" si il y a des problèame de connection à l'API.
+     * @throws IOException
+     */
     public String requestToAIAPIforFlowSimulation(
             String line,
             String sens,

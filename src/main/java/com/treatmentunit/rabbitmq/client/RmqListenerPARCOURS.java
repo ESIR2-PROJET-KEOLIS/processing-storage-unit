@@ -14,6 +14,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Classe qui gère la queue "PARCOURS" de rabbitMQ
+ * Pour récupérer les chemins des lignes de bus
+ */
 public class RmqListenerPARCOURS extends RmqListener implements Runnable{
 
     private final static String QUEUE_NAME = "PARCOURS";

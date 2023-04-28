@@ -41,6 +41,14 @@ public class OptimisationAndFormating {
         return resultat;
     }
 
+    /**
+     *
+     * @param lat1
+     * @param lon1
+     * @param lat2
+     * @param lon2
+     * @return Distance entre les deux points
+     */
     public static double haversine(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371;  // Earth's radius in kilometers
 
@@ -58,6 +66,14 @@ public class OptimisationAndFormating {
         return R * c;
     }
 
+    /**
+     *
+     * @param a coordonnée en x du premier point
+     * @param b coordonnée en y du premier point
+     * @param c coordonnée en x du deuxième point
+     * @param d coordonnée en y du deuxième point
+     * @return un tableau contenant 10 points répartis sur le segment [(a,b), (c,d)]
+     */
     private static ArrayList<String> pointsBetweenTwoCoordinates(double a, double b, double c, double d) {
         ArrayList<String> ret = new ArrayList<>();
 
@@ -73,6 +89,11 @@ public class OptimisationAndFormating {
         return ret;
     }
 
+    /**
+     * Méthode qui formate un chemin pour le rendre plus facile a manipuler et moins lourd.
+     * @param input String contenant un tableau avec toutes les coordonnées d'un chemin
+     * @return CopyOnWriteArrayList de string contenant le même chemin simplifier avec une inversion des longitude et latitude pour chaque point.
+     */
     public static CopyOnWriteArrayList<String> FormatingAndInversing(String input) {
         synchronized (arrangedCoords) {
             if (!input.isEmpty()) {
@@ -269,7 +290,12 @@ public class OptimisationAndFormating {
     }
 
 
-
+    /**
+     *
+     * @param input Le chemin d'une ligne de bus
+     * @param current_bus_pos la position actuelle d'un bus
+     * @return un string contenant le chemin simplifier suivie de la prochaine coordonnée du bus.
+     */
     public String getOutput(String input, String current_bus_pos) {
 
         synchronized (arrangedCoords) {
@@ -332,6 +358,13 @@ public class OptimisationAndFormating {
         }
     }
 
+    /**
+     * Renvoie une list de localTime repprésentant n valeur egalement réppartie entre start et end
+     * @param start
+     * @param end
+     * @param n
+     * @return
+     */
     public static List<LocalTime> generateTimestamps(LocalTime start, LocalTime end, int n) {
         List<LocalTime> timestamps = new ArrayList<>();
         long duration = end.toSecondOfDay() - start.toSecondOfDay();
@@ -343,6 +376,11 @@ public class OptimisationAndFormating {
         return timestamps;
     }
 
+    /**
+     *
+     * @param input
+     * @return
+     */
     public String JsonTabReverser(String input) {
         String ret = "";
         ret = ret.split(",")[1] + "," + ret.split(",")[0];
@@ -350,6 +388,12 @@ public class OptimisationAndFormating {
         return ret;
     }
 
+    /**
+     *
+     * @param input_tab
+     * @param target
+     * @return
+     */
     synchronized public String getTheoricalLocationPerHour(ArrayList<ArrayList<String>> input_tab, String target) {
 
         ArrayList<LocalTime> _LOCALTIMES_ = new ArrayList<>();
@@ -448,6 +492,11 @@ public class OptimisationAndFormating {
             return res;
     }
 
+    /**
+     * Mise en forme d'un tableau de tableau de string en format JSON.
+     * @param input ArrayList < ArrayList < String>>
+     * @return String des informations de l'input formaté en JSON
+     */
     public String convertFromArrayListOfArrayListsToJSON(ArrayList<ArrayList<String>> input) {
 
         String result = "{\n";
