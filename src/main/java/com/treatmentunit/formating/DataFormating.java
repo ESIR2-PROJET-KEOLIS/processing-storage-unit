@@ -1,6 +1,7 @@
 package com.treatmentunit.formating;
 
 import com.fasterxml.jackson.databind.util.TypeKey;
+import com.rabbitmq.client.impl.ForgivingExceptionHandler;
 import com.treatmentunit.database.DatabaseBinding;
 import com.treatmentunit.restservice.APIController;
 import com.treatmentunit.simulation.OptimisationAndFormating;
@@ -173,8 +174,16 @@ public class DataFormating {
                 """;
 
         JSONObject obj = new JSONObject(src);
-        Object number_of_entries = obj.getJSONObject("parameters").get("rows");
-        System.out.println("Number of entries processed: " + (obj.getJSONObject("parameters").get("rows")));
+
+        /*
+        Object number_of_entries;
+        try {
+            number_of_entries = obj.getJSONObject("parameters").get("rows");
+        } catch (Exception f) {
+            return "{}";
+        }*/
+
+        //System.out.println("Number of entries processed: " + (obj.getJSONObject("parameters").get("rows")));
 
         JSONArray array = obj.getJSONArray("records");
         if (array != null) {
@@ -278,6 +287,8 @@ public class DataFormating {
                     }
                 }
             }
+        } else {
+            return "{}";
         }
         FormatedStringHeader += FormatedStringContent;
         FormatedStringHeader += FormatedStringFooter;

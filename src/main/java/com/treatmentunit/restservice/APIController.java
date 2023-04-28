@@ -561,27 +561,28 @@ public class APIController {
                 return null;
         }
 
-
-         String debug = "avg_distance = " + avg_distance + " / avg_time_diff = " + avg_time_diff + " / bus_count = " + bus_count + " / lengthOfLine = " + lengthOfLine + " / day_d = " + day_d;
+        String debug = "avg_distance = " + avg_distance + " / avg_time_diff = " + avg_time_diff + " / bus_count = " + bus_count + " / lengthOfLine = " + lengthOfLine + " / day_d = " + day_d;
         System.out.println(debug);
 
         HttpAPIRequests httpAPIRequests = new HttpAPIRequests();
         String reponse = httpAPIRequests.requestToAIAPIforFlowSimulation(line, sens, avg_distance, avg_time_diff, number_of_buses, lengthOfLine, day_index_for_ai);
         //System.out.println("REPOOOOONSE DE AIIII : " + reponse);
 
-        JSONObject api_response = new JSONObject(reponse);
-        HashMap<String, Double> filling_level_and_proba = new HashMap<>();
+         if(reponse.charAt(0) == '{') {
+             JSONObject api_response = new JSONObject(reponse);
+             HashMap<String, Double> filling_level_and_proba = new HashMap<>();
 
-        for(String key : api_response.keySet()) {
-            System.out.println("key: " + key);
-            System.out.println("value : " + filling_level_and_proba.get(key));
-            BigDecimal bdValue = (BigDecimal) api_response.get(key);
-            double doubleValue = bdValue.doubleValue();
-            filling_level_and_proba.put(key, doubleValue);
-        }
+             for(String key : api_response.keySet()) {
+                 System.out.println("key: " + key);
+                 System.out.println("value : " + filling_level_and_proba.get(key));
+                 BigDecimal bdValue = (BigDecimal) api_response.get(key);
+                 double doubleValue = bdValue.doubleValue();
+                 filling_level_and_proba.put(key, doubleValue);
+             }
+             return filling_level_and_proba;
+         }
 
-        // TEST
-        return filling_level_and_proba;
-    }
+         return null;
+     }
 
 }
