@@ -27,6 +27,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+/**
+ * Classe qui gère les endpoints
+ */
 @RestController
 public class APIController {
 
@@ -36,6 +39,14 @@ public class APIController {
 
     static OptimisationAndFormating optAndForm = new OptimisationAndFormating();
 
+    /**
+     * EndPoint pour récupérer le parcours simplifier d'une ligne de bus
+     * @param line nomCourtLine dans la BDD
+     * @param sens 0 ou 1 dans la base de donnée
+     * @return le parcours "optimisé" c'est a dire avec moins de points
+     * @throws IOException
+     * @throws SQLException
+     */
     @GetMapping("/optimizedpath")
     public static String parcours(@RequestParam(value = "line") String line, @RequestParam(value = "sens") String sens) throws IOException, SQLException {
         // 0 Aller
@@ -54,6 +65,12 @@ public class APIController {
         }
     }
 
+    /**
+     * Endpoint pour récuperer tout les chemins des lignes de bus
+     * @return String formater en JSON contenant tous les chemins.
+     * @throws SQLException
+     * @throws InterruptedException
+     */
     @GetMapping("/allpaths")
     public static String parcoursArray() throws SQLException, InterruptedException {
         String REQ = "SELECT DISTINCT nomcourtligne, tab_coordonnes, sens FROM parcours_geo s, parcours_lignes_bus_star e where s.parcours_lignes_bus_star_id = e.parcours_lignes_bus_star_id and type=\'Principal\'";
@@ -61,6 +78,13 @@ public class APIController {
         return optAndForm.convertFromArrayListOfArrayListsToJSON(fetched);
     }
 
+    /**
+     * Endpoint qui renvoie la couleurs d'une ligne de bus sur le réseau stars
+     * @param line nomCourtLigne dans la BDD
+     * @return String contenant la couleur
+     * @throws SQLException
+     * @throws InterruptedException
+     */
     @GetMapping("/linecolor")
     public static String lineColor(@RequestParam(value = "line") String line ) throws SQLException, InterruptedException {
         String sql_req = "SELECT DISTINCT couleurtrace FROM `parcours_lignes_bus_star` WHERE nomcourtligne=\'" + line + "\'";
@@ -78,6 +102,15 @@ public class APIController {
 
      */
 
+    /**
+     * Endpoint qui renvoie une position théorique en fonction de la ligne de l'heure et du jours
+     * @param line route_short_name dans la BDD
+     * @param hour l'heure a laquel on simule
+     * @param day le jour de la simulation
+     * @return une string contenants les positions théoriques.
+     * @throws SQLException
+     * @throws InterruptedException
+     */
     @GetMapping("/theoricposition")
     public static String theoricPosition(@RequestParam(value = "line") String line, @RequestParam(value = "hour") String hour, @RequestParam(value = "day") String day) throws SQLException, InterruptedException {
 
@@ -95,6 +128,11 @@ public class APIController {
         return theorical_location;
     }
 
+    /**
+     * Un endpoint qui renvoie une string contenant toutes les vitesse moyenne des bus dans la directions 0
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/speed0")
     public static String BusSpeedSens0() throws IOException {
         return """
@@ -262,6 +300,11 @@ public class APIController {
                 """;
     }
 
+    /**
+     * Un endpoint qui renvoie une string contenant toutes les vitesse moyenne des bus dans la directions 1
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/speed1")
     public static String BusSpeedSens1() throws IOException {
         return """
@@ -431,6 +474,18 @@ public class APIController {
     }
 
     //@GetMapping("/flowsimulation")
+
+    /**
+     * Un endpoint qui renvoie le remplissage d'une ligne de bus en fonction de ça ligne, du sens et de la date / heure.
+     * @param line route_short_name dans la BDD
+     * @param sens sens dans la BDD
+     * @param day
+     * @param hour
+     * @return HashMap < String, Double>
+     * @throws SQLException
+     * @throws InterruptedException
+     * @throws IOException
+     */
      public static synchronized HashMap<String, Double> getSimulationFlow(@RequestParam("line") String line, @RequestParam("sens") String sens, @RequestParam("day") String day, @RequestParam("hour") String hour) throws SQLException, InterruptedException, IOException {
 
          ArrayList<String> days = new ArrayList<>(Arrays.asList("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"));
