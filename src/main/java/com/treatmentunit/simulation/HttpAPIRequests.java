@@ -91,7 +91,7 @@ public class HttpAPIRequests {
             }
             return response.toString();
         } catch (ConnectException ce) {
-            System.out.println("[!] Erreur lors de la connexion à l'API AI ! Veuillez relanccer le module.");
+            System.out.println("[!] Erreur lors de la connexion à l'API AI ! Veuillez relancer le module.");
             return "CONNECTION ERROR !";
         }
 
