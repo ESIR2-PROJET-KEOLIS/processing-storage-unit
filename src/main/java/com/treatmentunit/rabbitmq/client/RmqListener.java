@@ -7,7 +7,7 @@ import com.treatmentunit.formating.DataFormating;
 import java.util.concurrent.TimeUnit;
 
 /**
- * La classe RmqListener qui stock les informations pour ce connecter a une queue RabbitMQ
+ * La classe RmqListener qui stockent les informations pour se connecter à une queue RabbitMQ
  */
 public class RmqListener {
 

@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Classe qui gère l'envoie de message sur différentes queue
+ * Classe qui gère l'envoi de messages sur différentes queues
  */
 public class RmqPublisher {
 

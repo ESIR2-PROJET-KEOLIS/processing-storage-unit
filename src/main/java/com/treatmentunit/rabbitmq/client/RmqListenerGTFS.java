@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Classe qui gère la queue "GTFS" de rabbitMQ
  * Pour récupérer le lien de téléchargement du GTFS du réseau stars
- * Et remplie la BDD a l'aide du GTFS
+ * Et remplit la BDD à l'aide du GTFS
  */
 public class RmqListenerGTFS extends RmqListener implements Runnable{
 

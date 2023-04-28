@@ -20,7 +20,7 @@ import java.time.LocalTime;
 import java.util.*;
 
 /**
- * La classe DataFormating sert a la manipulation et réécriture de différent JSON reçu et envoyé dans le process-unit
+ * La classe DataFormating sert à la manipulation et réécriture de différent JSON reçu et envoyé dans le process-unit
  */
 public class DataFormating {
 
@@ -62,7 +62,7 @@ public class DataFormating {
     }
 
     /**
-     * Réecrit un JSONObject en ArrayList< String>
+     * Réécrit un JSONObject en ArrayList< String>
      * @param src prend un JSONObject
      * @return ArrayList< String>
      */
@@ -151,7 +151,7 @@ public class DataFormating {
     }
 
     /**
-     * Formate (JSON) le src pour l'envoie de position theorique
+     * Formate (JSON) le src pour l'envoi de position théorique
      * @param src String
      * @return String formaté (JSON)
      * @throws SQLException

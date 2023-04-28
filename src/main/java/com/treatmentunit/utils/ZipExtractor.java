@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.zip.*;
 
 /**
- * Classe utilisé pour manipulé les .zip
+ * Classe utilisé pour manipuler les .zip
  */
 public class ZipExtractor {
 

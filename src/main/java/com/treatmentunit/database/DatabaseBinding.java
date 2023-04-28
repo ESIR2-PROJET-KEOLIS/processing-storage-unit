@@ -7,7 +7,7 @@ import java.util.ArrayList;
 // DATABASE BINDING WITH "MYDB" ONLY !!
 
 /**
- * Classe DatabaseBinding sert à la manipulation de la base de donnée.
+ * Classe DatabaseBinding sert à la manipulation de la base de données.
  */
 public class DatabaseBinding {
 
@@ -18,7 +18,7 @@ public class DatabaseBinding {
     private static boolean connected_to_db_server = false;
 
     /**
-     * La méthode connectToSqlSocket nous connect à la base de donnée
+     * La méthode connectToSqlSocket nous connect à la base de données
      */
     public static void connectToSqlSocket() {
 
@@ -50,8 +50,8 @@ public class DatabaseBinding {
     }
 
     /**
-     * La méthode requestInsert envoie une requete d'insertion a la base de donnée
-     * @param query est une requete sql d'insertion
+     * La méthode requestInsert envoie une requête d'insertion à la base de données
+     * @param query est une requête sql d'insertion
      */
     public void requestInsert(String query) {
         try {
@@ -64,10 +64,10 @@ public class DatabaseBinding {
     }
 
     /**
-     * La méthode requestFetchNColumns envoie une requete a la base de donnée est renvoie la réponse sous forme
-     * de tableau de tableaux de chaine de caractère
-     * @param query est une requete sql
-     * @return ArrayList< ArrayList < String>>  repprésentant les colonnes et les lignes en sortie de la requete
+     * La méthode requestFetchNColumns envoie une requête à la base de données et renvoie la réponse sous forme
+     *      * de tableau de tableaux de chaine de caractère
+     * @param query est une requête Sql
+     * @return ArrayList< ArrayList < String>>  représentant les colonnes et les lignes en sortie de la requête
      * @throws SQLException
      * @throws InterruptedException
      */
@@ -97,10 +97,10 @@ public class DatabaseBinding {
     }
 
     /**
-     * la méthode requestFetchSingleValue envoie une requête à la base de donnée et renvoie une chaine de caractère contenant l'élèment dans
-     * la premiere ligne et premiere colonne  de la réponse
+     * la méthode requestFetchSingleValue envoie une requête à la base de données et renvoie une chaine de caractère contenant l'élément dans
+     * la première ligne et première colonne  de la réponse
      * @param query une requête sql
-     * @return String contenant la valeur dans la premiere ligne et premiere colum de la réponse
+     * @return String contenant la valeur dans la première ligne et première colonne de la réponse
      * @throws SQLException
      * @throws InterruptedException
      */

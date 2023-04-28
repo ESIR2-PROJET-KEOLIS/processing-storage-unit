@@ -40,10 +40,10 @@ public class APIController {
     static OptimisationAndFormating optAndForm = new OptimisationAndFormating();
 
     /**
-     * EndPoint pour récupérer le parcours simplifier d'une ligne de bus
+     * EndPoint pour récupérer le parcours simplifié d'une ligne de bus
      * @param line nomCourtLine dans la BDD
      * @param sens 0 ou 1 dans la base de donnée
-     * @return le parcours "optimisé" c'est a dire avec moins de points
+     * @return le parcours "optimisé" c'est-à-dire avec moins de points
      * @throws IOException
      * @throws SQLException
      */
@@ -66,7 +66,7 @@ public class APIController {
     }
 
     /**
-     * Endpoint pour récuperer tout les chemins des lignes de bus
+     * Endpoint pour récupérer tous les chemins des lignes de bus
      * @return String formater en JSON contenant tous les chemins.
      * @throws SQLException
      * @throws InterruptedException
@@ -79,7 +79,7 @@ public class APIController {
     }
 
     /**
-     * Endpoint qui renvoie la couleurs d'une ligne de bus sur le réseau stars
+     * Endpoint qui renvoie la couleur d'une ligne de bus sur le réseau stars
      * @param line nomCourtLigne dans la BDD
      * @return String contenant la couleur
      * @throws SQLException
@@ -103,11 +103,11 @@ public class APIController {
      */
 
     /**
-     * Endpoint qui renvoie une position théorique en fonction de la ligne de l'heure et du jours
+     * Endpoint qui renvoie une position théorique en fonction de la ligne de l'heure et du jour
      * @param line route_short_name dans la BDD
-     * @param hour l'heure a laquel on simule
+     * @param hour l'heure à laquelle on simule
      * @param day le jour de la simulation
-     * @return une string contenants les positions théoriques.
+     * @return une string contenant les positions théoriques.
      * @throws SQLException
      * @throws InterruptedException
      */
@@ -129,7 +129,7 @@ public class APIController {
     }
 
     /**
-     * Un endpoint qui renvoie une string contenant toutes les vitesse moyenne des bus dans la directions 0
+     * Un endpoint qui renvoie une string contenant toutes les vitesses moyennes des bus dans la direction 0
      * @return
      * @throws IOException
      */
@@ -301,7 +301,7 @@ public class APIController {
     }
 
     /**
-     * Un endpoint qui renvoie une string contenant toutes les vitesse moyenne des bus dans la directions 1
+     * Un endpoint qui renvoie une string contenant toutes les vitesses moyennes des bus dans la direction 1
      * @return
      * @throws IOException
      */
@@ -476,7 +476,7 @@ public class APIController {
     //@GetMapping("/flowsimulation")
 
     /**
-     * Un endpoint qui renvoie le remplissage d'une ligne de bus en fonction de ça ligne, du sens et de la date / heure.
+     * Une méthode qui renvoie le remplissage d'une ligne de bus en fonction de ça ligne, du sens et de la date / heure.
      * @param line route_short_name dans la BDD
      * @param sens sens dans la BDD
      * @param day

@@ -72,7 +72,7 @@ public class OptimisationAndFormating {
      * @param b coordonnée en y du premier point
      * @param c coordonnée en x du deuxième point
      * @param d coordonnée en y du deuxième point
-     * @return un tableau contenant 10 points répartie sur le segment [(a,b), (c,d)]
+     * @return un tableau contenant 10 points répartis sur le segment [(a,b), (c,d)]
      */
     private static ArrayList<String> pointsBetweenTwoCoordinates(double a, double b, double c, double d) {
         ArrayList<String> ret = new ArrayList<>();
@@ -92,7 +92,7 @@ public class OptimisationAndFormating {
     /**
      * Méthode qui formate un chemin pour le rendre plus facile a manipuler et moins lourd.
      * @param input String contenant un tableau avec toutes les coordonnées d'un chemin
-     * @return CopyOnWriteArrayList de string contenant le même chemin simplifier avec une inversion des longitude et latitude pour chaque points.
+     * @return CopyOnWriteArrayList de string contenant le même chemin simplifier avec une inversion des longitude et latitude pour chaque point.
      */
     public static CopyOnWriteArrayList<String> FormatingAndInversing(String input) {
         synchronized (arrangedCoords) {
@@ -358,6 +358,13 @@ public class OptimisationAndFormating {
         }
     }
 
+    /**
+     * Renvoie une list de localTime repprésentant n valeur egalement réppartie entre start et end
+     * @param start
+     * @param end
+     * @param n
+     * @return
+     */
     public static List<LocalTime> generateTimestamps(LocalTime start, LocalTime end, int n) {
         List<LocalTime> timestamps = new ArrayList<>();
         long duration = end.toSecondOfDay() - start.toSecondOfDay();
@@ -369,6 +376,11 @@ public class OptimisationAndFormating {
         return timestamps;
     }
 
+    /**
+     *
+     * @param input
+     * @return
+     */
     public String JsonTabReverser(String input) {
         String ret = "";
         ret = ret.split(",")[1] + "," + ret.split(",")[0];
@@ -483,7 +495,7 @@ public class OptimisationAndFormating {
     /**
      * Mise en forme d'un tableau de tableau de string en format JSON.
      * @param input ArrayList < ArrayList < String>>
-     * @return String des information de l'input formaté en JSON
+     * @return String des informations de l'input formaté en JSON
      */
     public String convertFromArrayListOfArrayListsToJSON(ArrayList<ArrayList<String>> input) {
 

@@ -12,12 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
- * Classe pour les requete à l'API contenant l'IA
+ * Classe pour les requetes à l'API contenant l'IA
  */
 public class HttpAPIRequests {
 
     /**
-     * Méthode pour appellè l'IA
+     * Méthode pour appeller l'IA
      * @param line
      * @param sens
      * @param avg_distance
