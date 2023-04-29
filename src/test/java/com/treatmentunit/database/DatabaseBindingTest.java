@@ -1,3 +1,5 @@
+// Fait a l'aide du tuto : https://www.baeldung.com/java-dbunit
+// Git de Eugenp : https://github.com/eugenp
 package com.treatmentunit.database;
 
 import org.dbunit.IDatabaseTester;
@@ -6,15 +8,8 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.*;
-import org.junit.Assert.*;
-
-import static org.dbunit.Assertion.assertEquals;
-
-
-import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.postgresql.util.PSQLException;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -67,13 +62,6 @@ public class DatabaseBindingTest {
         tester.onTearDown();
     }
 
-    /*@Test
-    public void givenDataSet_whenSelect_thenFirstTitleIsGreyTShirt() throws Exception {
-        ResultSet rs = connection.createStatement().executeQuery("select * from ITEMS where id = 1");
-
-        assertThat(rs.next()).isTrue();
-        assertThat(rs.getString("title")).isEqualTo("Grey T-Shirt");
-    }*/
 
     @Test
     public void requestInsertTest() throws Exception {
@@ -88,19 +76,6 @@ public class DatabaseBindingTest {
         assertThat(rs.getString("test_info_1")).isEqualTo("2info1");
         assertThat(rs.getString("test_info_2")).isEqualTo("2info2");
     }
-    /*@Test(expected = org.opentest4j.AssertionFailedError.class )
-    public void requestInsertTest_exeptio() throws Exception {
-        String query = "INSERT INTO JeNeSuisPasLa (test_id, test_info_1, test_info_2) VALUES ('2', '2info1', '2info2' )";
-        dbb.requestInsert(query);
-
-        query = "SELECT * FROM TEST WHERE test_id='2' AND test_info_1='2info1' AND test_info_2='2info2'";
-        ResultSet rs =  tester.getConnection().getConnection().createStatement().executeQuery(query);
-
-        assertThat(rs.next()).isTrue();
-        assertThat(rs.getString("test_id")).isEqualTo("2");
-        assertThat(rs.getString("test_info_1")).isEqualTo("2info1");
-        assertThat(rs.getString("test_info_2")).isEqualTo("2info2");
-    }*/
 
 
     @Test (expected = SQLException.class)

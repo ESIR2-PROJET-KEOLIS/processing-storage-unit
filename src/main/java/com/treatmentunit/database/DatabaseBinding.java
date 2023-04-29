@@ -62,6 +62,7 @@ public class DatabaseBinding {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("[!] ERREUR LORS DE L'INSERTION DANS LA BDD.");
+
             //System.out.println("[!] Requête en cause : " + query);
         }
     }
