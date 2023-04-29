@@ -1,10 +1,14 @@
-package com.treatmentunit.rabbitmq.client;
+package rabbitmq;
 
 import com.mysql.cj.exceptions.ConnectionIsClosedException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.treatmentunit.database.DatabaseBinding;
+import com.treatmentunit.rabbitmq.client.RmqListenerGTFS;
+import com.treatmentunit.rabbitmq.client.RmqListenerPARCOURS;
+import com.treatmentunit.rabbitmq.client.RmqListenerPositionAllBus;
+import com.treatmentunit.rabbitmq.client.RmqPublisher;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -35,6 +35,14 @@ public class RmqListenerPARCOURS extends RmqListener implements Runnable{
         super(host, username, password);
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
     @Override
     public void run() {
         ConnectionFactory connectionFactory = new ConnectionFactory();

@@ -1,5 +1,6 @@
-package com.treatmentunit.simulation;
+package simulation;
 
+import com.treatmentunit.simulation.HttpAPIRequests;
 import org.junit.Test;
 
 import java.io.IOException;

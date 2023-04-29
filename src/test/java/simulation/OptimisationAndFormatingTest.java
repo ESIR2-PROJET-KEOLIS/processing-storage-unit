@@ -1,5 +1,6 @@
-package com.treatmentunit.simulation;
+package simulation;
 import com.beust.ah.A;
+import com.treatmentunit.simulation.OptimisationAndFormating;
 import org.junit.Assert.*;
 import org.junit.Test;
 
