@@ -32,6 +32,5 @@ public class HttpAPIRequestsTest {
                 0.0);
 
         assertEquals(response, "{\"maxFreqH\":0.34999993443489075,\"maxFreqL\":0.46599990129470825,\"maxFreqM\":0.18399998545646667}");
-
     }
 }
