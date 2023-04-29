@@ -11,11 +11,14 @@ import java.util.ArrayList;
  */
 public class DatabaseBinding {
 
+
+
     private static Connection con;
     private ResultSet result;
     private boolean requested;
     private static Statement statement;
     private static boolean connected_to_db_server = false;
+
 
     /**
      * La méthode connectToSqlSocket nous connect à la base de données
@@ -91,8 +94,9 @@ public class DatabaseBinding {
                 return fetched;
             } catch (SQLException e) {
                 Thread.sleep(12);
+                throw new SQLException();
             }
-            return fetched;
+
         }
     }
 
@@ -119,11 +123,51 @@ public class DatabaseBinding {
                 statement.close();
             } catch (SQLException e) {
                 Thread.sleep(12);
+                throw new SQLException();
             }
         }
 
         return val;
     }
 
+    public static Connection getCon() {
+        return con;
+    }
+
+    public ResultSet getResult() {
+        return result;
+    }
+
+    public boolean isRequested() {
+        return requested;
+    }
+
+    public static Statement getStatement() {
+        return statement;
+    }
+
+    public static boolean isConnected_to_db_server() {
+        return connected_to_db_server;
+    }
+
+    public static void setCon(Connection con) {
+        DatabaseBinding.con = con;
+    }
+
+    public void setResult(ResultSet result) {
+        this.result = result;
+    }
+
+    public void setRequested(boolean requested) {
+        this.requested = requested;
+    }
+
+    public static void setStatement(Statement statement) {
+        DatabaseBinding.statement = statement;
+    }
+
+    public static void setConnected_to_db_server(boolean connected_to_db_server) {
+        DatabaseBinding.connected_to_db_server = connected_to_db_server;
+    }
 
 }
