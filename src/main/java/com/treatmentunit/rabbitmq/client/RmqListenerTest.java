@@ -1,4 +1,4 @@
-package rabbitmq;
+package com.treatmentunit.rabbitmq.client;
 
 import com.mysql.cj.exceptions.ConnectionIsClosedException;
 import com.rabbitmq.client.Channel;
