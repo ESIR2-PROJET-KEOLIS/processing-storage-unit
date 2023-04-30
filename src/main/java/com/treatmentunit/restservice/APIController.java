@@ -41,6 +41,7 @@ public class APIController {
 
     /**
      * EndPoint pour récupérer le parcours simplifié d'une ligne de bus
+     *
      * @param line nomCourtLine dans la BDD
      * @param sens 0 ou 1 dans la base de donnée
      * @return le parcours "optimisé" c'est-à-dire avec moins de points
@@ -67,6 +68,7 @@ public class APIController {
 
     /**
      * Endpoint pour récupérer tous les chemins des lignes de bus
+     *
      * @return String formater en JSON contenant tous les chemins.
      * @throws SQLException
      * @throws InterruptedException
@@ -80,45 +82,76 @@ public class APIController {
 
     /**
      * Endpoint qui renvoie la couleur d'une ligne de bus sur le réseau stars
+     *
      * @param line nomCourtLigne dans la BDD
      * @return String contenant la couleur
      * @throws SQLException
      * @throws InterruptedException
      */
     @GetMapping("/linecolor")
-    public static String lineColor(@RequestParam(value = "line") String line ) throws SQLException, InterruptedException {
+    public static String lineColor(@RequestParam(value = "line") String line) throws SQLException, InterruptedException {
         String sql_req = "SELECT DISTINCT couleurtrace FROM `parcours_lignes_bus_star` WHERE nomcourtligne=\'" + line + "\'";
         String single_val = databaseBinding.requestFetchSingleValue(sql_req);
         return single_val;
     }
 
-    /* SELECT * FROM stop_times WHERE TIME('05:30:00') BETWEEN departure_time and arrival_time ORDER BY `stop_id` ASC */
-
-    /*
-
-    SELECT * FROM stop_times, trips, routes, calendar WHERE stop_times.trip_id = trips.trip_id AND trips.route_id = routes.route_id AND routes.route_short_name = 'C1' AND trips.direction_id = 1 AND trips.service_id = calendar.service_id AND monday = '0' AND tuesday = '0' AND wednesday = '0' AND thursday = '0' AND saturday = '0' AND sunday = '0' AND friday='1' AND TIME('17:30:00') BETWEEN departure_time AND arrival_time ORDER BY `stop_id` ASC;
-
-    SELECT * FROM parcours_geo, stop_times, trips, routes, calendar WHERE stop_times.trip_id = trips.trip_id AND trips.route_id = routes.route_id AND routes.route_short_name = 'C1' AND trips.direction_id = 1 AND trips.service_id = calendar.service_id AND monday = '0' AND tuesday = '0' AND wednesday = '0' AND thursday = '0' AND saturday = '0' AND sunday = '0' AND friday='1' AND parcours_geo.parcours_lignes_bus_star_id = trips.shape_id AND TIME('17:30:00') BETWEEN departure_time AND arrival_time ORDER BY `stop_id` ASC LIMIT 1;
-
-     */
 
     /**
      * Endpoint qui renvoie une position théorique en fonction de la ligne de l'heure et du jour
+     *
      * @param line route_short_name dans la BDD
      * @param hour l'heure à laquelle on simule
-     * @param day le jour de la simulation
+     * @param day  le jour de la simulation
      * @return une string contenant les positions théoriques.
      * @throws SQLException
      * @throws InterruptedException
      */
     @GetMapping("/theoricposition")
-    public static String theoricPosition(@RequestParam(value = "line") String line, @RequestParam(value = "hour") String hour, @RequestParam(value = "day") String day) throws SQLException, InterruptedException {
+    public static String theoricPosition(@RequestParam(value = "line") String line, @RequestParam(value = "hour") String hour, @RequestParam(value = "day") String day) throws SQLException, InterruptedException, IOException {
         FormatedTheoricalPositionWithPredictedFilling = new ArrayList<>();
         String ret = "";
-        String sql_req = "SELECT DISTINCT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day  + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
+        String sql_req = "SELECT DISTINCT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
         String theorical_location = "";
 
         ArrayList<ArrayList<String>> val = databaseBinding.requestFetchNColumns(sql_req);
+        if (val.size() != 0) {
+            theorical_location = optAndForm.getTheoricalLocationPerHour(val, hour);
+            JSONArray jsonArray = new JSONArray(theorical_location);
+            String filling_level = "N/A";
+            double filling_proba = 0.0;
+            if (line.equals("C1")) {
+                FormatedTheoricalPositionWithPredictedFilling = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = new JSONObject(jsonArray.get(i).toString());
+                    if (jsonObject.getInt("sens") == 0) {
+                        HashMap<String, Double> fillingPredictions = getSimulationFlow(line, String.valueOf(Integer.valueOf(jsonObject.getInt("sens"))), day, hour, theorical_location);
+                        if (fillingPredictions != null) {
+                            for (Map.Entry<String, Double> entry : fillingPredictions.entrySet()) {
+                                if (entry.getValue() > filling_proba) {
+                                    filling_proba = entry.getValue();
+                                    filling_level = entry.getKey();
+                                }
+                            }
+                        }
+                    } else {
+                        filling_level = "N/A";
+                        filling_proba = 0.0;
+                    }
+                    jsonObject.put("filling_level", filling_level);
+                    jsonObject.put("filling_proba", filling_proba);
+                    FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
+                }
+
+                String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
+                System.out.println("Returned theorical position for " + line + " : " + to_return);
+                return to_return;
+            } else {
+                return theorical_location;
+            }
+        }
+        return "[!] Error while processing theoric positions.";
+    }
+        /*
         if(val.size() != 0) {
             theorical_location = optAndForm.getTheoricalLocationPerHour(val, hour);
                 try {
@@ -136,15 +169,17 @@ public class APIController {
                                         filling_proba = entry.getValue();
                                         filling_level = entry.getKey();
                                     }
+                                    jsonObject.put("filling_level", filling_level);
+                                    jsonObject.put("filling_proba", filling_proba);
+                                    FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
                                 }
-                                jsonObject.put("filling_level", filling_level);
-                                jsonObject.put("filling_proba", filling_proba);
-                                FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
                             }
                         } else {
+                            FormatedTheoricalPositionWithPredictedFilling = new ArrayList<>();
                             return theorical_location;
                         }
                     }
+
                     String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
                     System.out.println("---------------------- DEBUG ---------------------- ");
                     System.out.println("Returned theorical position : " + to_return);
@@ -155,10 +190,7 @@ public class APIController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-        }
-        return "[!] Empty return, can't process theorical positions on API call.";
-    }
-
+        }*/
     /**
      * Un endpoint qui renvoie une string contenant toutes les vitesses moyennes des bus dans la direction 0
      * @return
