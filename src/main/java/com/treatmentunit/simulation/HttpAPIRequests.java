@@ -37,11 +37,8 @@ public class HttpAPIRequests {
             double lengthOfLine,
             double day
     ) throws IOException {
-
         boolean connected = false;
-
         try {
-
             String host = System.getenv("API_IA_HOST");
             if(host == null) host = "localhost";
             String env_port = String.valueOf(5001);

@@ -125,14 +125,14 @@ public class APIController {
                 try {
                     String filling_level = "N/A";
                     double filling_proba = 0.0;
-                    System.out.println(theorical_location);
+                    //System.out.println(theorical_location);
                     JSONArray jsonArray = new JSONArray(theorical_location);
                     for(int i = 0 ; i < jsonArray.length() ; i++) {
                         JSONObject jsonObject = new JSONObject(jsonArray.get(i).toString());
                         if(jsonObject.getInt("sens") == 0 && line.equals("C1")) {
                             HashMap<String, Double> fillingPredictions = getSimulationFlow(line, String.valueOf(Integer.valueOf(jsonObject.getInt("sens"))), day, hour, theorical_location);
                             if(fillingPredictions != null) {
-                                System.out.println("[DEBUG] Not null & size = " + fillingPredictions.size());
+                                //System.out.println("[DEBUG] Not null & size = " + fillingPredictions.size());
                                 for (Map.Entry<String, Double> entry : fillingPredictions.entrySet()) {
                                     if (entry.getValue() > filling_proba) {
                                         filling_proba = entry.getValue();
@@ -153,7 +153,9 @@ public class APIController {
         } else {
             return "[!] Empty return, can't process theorical positions on API call.";
         }
-        return new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
+
+        String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
+        return to_return;
     }
 
     /**
@@ -528,7 +530,6 @@ public class APIController {
         // Mean of Bus Delays
         HashMap<String, Integer> delaysHashmap = DataFormating.getDelaysHashMap();
         int size = delaysHashmap.size();
-        //System.out.println("SIIIIZIZZZE : " + size);
         int additionOfDelays = 0;
         Set<String> keys = delaysHashmap.keySet();
         for(String value : keys) {
@@ -585,15 +586,6 @@ public class APIController {
 
         try {
 
-            System.out.println("----------------------------- [DEBUG] ----------------------------- ");
-            System.out.println("additionOfDistances : " + additionOfDistances);
-            System.out.println("number_of_buses : " + number_of_buses);
-            System.out.println("additionOfDelays : " + additionOfDelays);
-            System.out.println("size : " + size);
-            System.out.println("number_of_buses_currently : " + number_of_buses_currently);
-            System.out.println("fetched_line_length : " + fetched_line_length);
-            System.out.println("day_d : " + day_d);
-
             avg_distance = (additionOfDistances/number_of_buses);
             avg_time_diff = additionOfDelays/size;
             bus_count = number_of_buses_currently;
@@ -623,8 +615,8 @@ public class APIController {
             HashMap<String, Double> filling_level_and_proba = new HashMap<>();
 
             for(String key : api_response.keySet()) {
-                System.out.println("key: " + key);
-                System.out.println("value : " + api_response.getDouble(key));
+                //System.out.println("key: " + key);
+                //System.out.println("value : " + api_response.getDouble(key));
                 BigDecimal bdValue = (BigDecimal) api_response.get(key);
                 double doubleValue = bdValue.doubleValue();
                 filling_level_and_proba.put(key, doubleValue);
