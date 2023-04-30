@@ -42,12 +42,14 @@ public class HttpAPIRequests {
 
         try {
 
+            /*
             String host = System.getenv("API_IA_HOST");
             if(host == null) host = "localhost";
             String env_port = String.valueOf(5001);
+            */
 
-            //String url = "http://localhost:5001/predict/Nombus=" + line + "&Sens=" + sens;
-            String url = "http://" + host + ":" + env_port + "/predict/Nombus=" + line + "&Sens=" + sens;
+            String url = "http://localhost:5001/predict/Nombus=" + line + "&Sens=" + sens;
+            //String url = "http://" + host + ":" + env_port + "/predict/Nombus=" + line + "&Sens=" + sens;
             System.out.println("Contacted URL : " + url);
 
             URL obj = new URL(url);

@@ -52,16 +52,6 @@ public class DataFormating {
         return new String(Files.readAllBytes(Paths.get(file)));
     }
 
-    public static void main(String[] args) throws Exception {
-
-        // Pour tester avec un fichier json provenant d'un curl
-        String test_file = "C:\\Users\\1234Y\\OneDrive\\Documents\\DossierEtudes2\\PROJ-SI\\rest-service\\rest-service\\src\\main\\java\\com\\treatmentunit\\formating\\exemple.json";
-        String json = readFileAsString(test_file);
-
-        DataFormating dataFormating = new DataFormating();
-        System.out.println(dataFormating.formatReceivedJSON(json));
-    }
-
     /**
      * Réécrit un JSONObject en ArrayList< String>
      * @param src prend un JSONObject
@@ -72,71 +62,71 @@ public class DataFormating {
 
         try {
 
-        JSONObject fields = src.getJSONObject("fields");
-        String sens = String.valueOf(fields.getInt("sens"));
-        String code = fields.getString("code");
-        String type = fields.getString("type");
-        String geo_point_2d = fields.getJSONArray("geo_point_2d").toString();
-        String sens_commercial = fields.getString("senscommercial");
-        String est_version_active = fields.getString("estversionactive");
-        String id_ligne = fields.getString("idligne");
-        String libelle_long = fields.getString("libellelong");
-        String id_arret_arrivee = fields.getString("idarretarrivee");
-        JSONObject parcours = fields.getJSONObject("parcours");
-        String coordinates_parcours = parcours.getJSONArray("coordinates").toString();
-        String coordinates_type = parcours.getString("type");
-        String id = fields.getString("id");
-        String nom_arret_depart;
-        if(fields.has("nomarretdepart")) {
-            nom_arret_depart = fields.getString("nomarretdepart");
-        } else {
-            nom_arret_depart = "0";
-        }
-        String date_debut_version = fields.getString("datedebutversion");
-        String id_arret_depart = fields.getString("idarretdepart");
-        String est_accessible_pmr = fields.getString("estaccessiblepmr");
-        String visibilite = fields.getString("visibilite");
-        String date_fin_version = "";
-        if(fields.has("datefinversion")) {
-            date_fin_version = fields.getString("datefinversion");
-        } else {
-            date_fin_version = "0";
-        }
-        String nom_court_ligne = fields.getString("nomcourtligne");
-        String nom_arret_arrivee;
+            JSONObject fields = src.getJSONObject("fields");
+            String sens = String.valueOf(fields.getInt("sens"));
+            String code = fields.getString("code");
+            String type = fields.getString("type");
+            String geo_point_2d = fields.getJSONArray("geo_point_2d").toString();
+            String sens_commercial = fields.getString("senscommercial");
+            String est_version_active = fields.getString("estversionactive");
+            String id_ligne = fields.getString("idligne");
+            String libelle_long = fields.getString("libellelong");
+            String id_arret_arrivee = fields.getString("idarretarrivee");
+            JSONObject parcours = fields.getJSONObject("parcours");
+            String coordinates_parcours = parcours.getJSONArray("coordinates").toString();
+            String coordinates_type = parcours.getString("type");
+            String id = fields.getString("id");
+            String nom_arret_depart;
+            if(fields.has("nomarretdepart")) {
+                nom_arret_depart = fields.getString("nomarretdepart");
+            } else {
+                nom_arret_depart = "0";
+            }
+            String date_debut_version = fields.getString("datedebutversion");
+            String id_arret_depart = fields.getString("idarretdepart");
+            String est_accessible_pmr = fields.getString("estaccessiblepmr");
+            String visibilite = fields.getString("visibilite");
+            String date_fin_version = "";
+            if(fields.has("datefinversion")) {
+                date_fin_version = fields.getString("datefinversion");
+            } else {
+                date_fin_version = "0";
+            }
+            String nom_court_ligne = fields.getString("nomcourtligne");
+            String nom_arret_arrivee;
             if(fields.has("nomarretarrivee")) {
                 nom_arret_arrivee = fields.getString("nomarretarrivee");
             } else {
                 nom_arret_arrivee = "0";
             }
-        String longueur = String.valueOf(fields.getDouble("longueur"));
-        String couleur_trace = fields.getString("couleurtrace");
+            String longueur = String.valueOf(fields.getDouble("longueur"));
+            String couleur_trace = fields.getString("couleurtrace");
 
-        // PAS DE FACET LORS DE l'APPEL API !!
+            // PAS DE FACET LORS DE l'APPEL API !!
 
-        res.add(id);
-        res.add(date_debut_version);
-        res.add(date_fin_version);
-        res.add(est_version_active);
-        res.add(code);
-        res.add(id_ligne);
-        res.add(nom_court_ligne);
-        res.add(sens);
-        res.add(sens_commercial);
-        res.add(type);
-        res.add(libelle_long);
-        res.add(id_arret_depart);
-        res.add(nom_arret_depart);
-        res.add(id_arret_arrivee);
-        res.add(nom_arret_arrivee);
-        res.add(est_accessible_pmr);
-        res.add(longueur);
-        res.add(couleur_trace);
-        res.add(visibilite);
-        res.add(geo_point_2d);
+            res.add(id);
+            res.add(date_debut_version);
+            res.add(date_fin_version);
+            res.add(est_version_active);
+            res.add(code);
+            res.add(id_ligne);
+            res.add(nom_court_ligne);
+            res.add(sens);
+            res.add(sens_commercial);
+            res.add(type);
+            res.add(libelle_long);
+            res.add(id_arret_depart);
+            res.add(nom_arret_depart);
+            res.add(id_arret_arrivee);
+            res.add(nom_arret_arrivee);
+            res.add(est_accessible_pmr);
+            res.add(longueur);
+            res.add(couleur_trace);
+            res.add(visibilite);
+            res.add(geo_point_2d);
 
-        res.add(id);
-        res.add(coordinates_parcours);
+            res.add(id);
+            res.add(coordinates_parcours);
 
         } catch (JSONException e) {
             System.out.println("STOOOOOOOOOOOOOOOOOOOOOOOOOOOP :::");
@@ -246,7 +236,7 @@ public class DataFormating {
                             }
 
                             String _concated_ = String.valueOf(concated_hour) + ":" + concated_minute + ":" + concated_seconds;
-                            retrieved_hashmap_from_api_controller = APIController.getSimulationFlow(nom_bus, sens, days.get(day_of_week-1), _concated_);
+                            retrieved_hashmap_from_api_controller = APIController.getSimulationFlow(nom_bus, sens, days.get(day_of_week-1), _concated_, null);
                             if(retrieved_hashmap_from_api_controller != null) {
                                 for (Map.Entry<String, Double> entry : retrieved_hashmap_from_api_controller.entrySet()) {
                                     if (entry.getValue() > filling_proba) {

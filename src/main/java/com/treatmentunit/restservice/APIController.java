@@ -36,8 +36,8 @@ public class APIController {
     private static final String template = "Hello %s !";
     private static final AtomicLong counter = new AtomicLong();
     static DatabaseBinding databaseBinding = new DatabaseBinding();
-
     static OptimisationAndFormating optAndForm = new OptimisationAndFormating();
+    static List<JSONObject> FormatedTheoricalPositionWithPredictedFilling;
 
     /**
      * EndPoint pour récupérer le parcours simplifié d'une ligne de bus
@@ -113,7 +113,7 @@ public class APIController {
      */
     @GetMapping("/theoricposition")
     public static String theoricPosition(@RequestParam(value = "line") String line, @RequestParam(value = "hour") String hour, @RequestParam(value = "day") String day) throws SQLException, InterruptedException {
-
+        FormatedTheoricalPositionWithPredictedFilling = new ArrayList<>();
         String ret = "";
         String sql_req = "SELECT DISTINCT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day  + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
         String theorical_location = "";
@@ -122,10 +122,38 @@ public class APIController {
         ArrayList<ArrayList<String>> val = databaseBinding.requestFetchNColumns(sql_req);
         if(val.size() != 0) {
             theorical_location = optAndForm.getTheoricalLocationPerHour(val, hour);
+                try {
+                    String filling_level = "N/A";
+                    double filling_proba = 0.0;
+                    System.out.println(theorical_location);
+                    JSONArray jsonArray = new JSONArray(theorical_location);
+                    for(int i = 0 ; i < jsonArray.length() ; i++) {
+                        JSONObject jsonObject = new JSONObject(jsonArray.get(i).toString());
+                        if(jsonObject.getInt("sens") == 0 && line.equals("C1")) {
+                            HashMap<String, Double> fillingPredictions = getSimulationFlow(line, String.valueOf(Integer.valueOf(jsonObject.getInt("sens"))), day, hour, theorical_location);
+                            if(fillingPredictions != null) {
+                                System.out.println("[DEBUG] Not null & size = " + fillingPredictions.size());
+                                for (Map.Entry<String, Double> entry : fillingPredictions.entrySet()) {
+                                    if (entry.getValue() > filling_proba) {
+                                        filling_proba = entry.getValue();
+                                        filling_level = entry.getKey();
+                                    }
+                                }
+                            }
+                        }
+                        jsonObject.put("filling_level", filling_level);
+                        jsonObject.put("filling_proba", filling_proba);
+                        FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
         } else {
             return "[!] Empty return, can't process theorical positions on API call.";
         }
-        return theorical_location;
+        return new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
     }
 
     /**
@@ -486,9 +514,9 @@ public class APIController {
      * @throws InterruptedException
      * @throws IOException
      */
-     public static synchronized HashMap<String, Double> getSimulationFlow(@RequestParam("line") String line, @RequestParam("sens") String sens, @RequestParam("day") String day, @RequestParam("hour") String hour) throws SQLException, InterruptedException, IOException {
+    public static synchronized HashMap<String, Double> getSimulationFlow(@RequestParam("line") String line, @RequestParam("sens") String sens, @RequestParam("day") String day, @RequestParam("hour") String hour, String theo_pos) throws SQLException, InterruptedException, IOException {
 
-         ArrayList<String> days = new ArrayList<>(Arrays.asList("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"));
+        ArrayList<String> days = new ArrayList<>(Arrays.asList("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"));
 
         // ---------------------------- Not on start ! ----------------------------
 
@@ -521,8 +549,16 @@ public class APIController {
         */
 
 
+
         // Average distance
-        String theoric_pos = theoricPosition(line, hour, day);
+        String theoric_pos = "";
+        // Problème de récurssivité ici !!!!
+        if(theo_pos == null) {
+            theoric_pos = theoricPosition(line, hour, day);
+        } else {
+            theoric_pos = theo_pos;
+        }
+
         JSONArray array_of_elements = new JSONArray(theoric_pos);
         int additionOfDistances = 0;
         int number_of_buses = array_of_elements.length();
@@ -548,6 +584,16 @@ public class APIController {
         double day_index_for_ai = 0;
 
         try {
+
+            System.out.println("----------------------------- [DEBUG] ----------------------------- ");
+            System.out.println("additionOfDistances : " + additionOfDistances);
+            System.out.println("number_of_buses : " + number_of_buses);
+            System.out.println("additionOfDelays : " + additionOfDelays);
+            System.out.println("size : " + size);
+            System.out.println("number_of_buses_currently : " + number_of_buses_currently);
+            System.out.println("fetched_line_length : " + fetched_line_length);
+            System.out.println("day_d : " + day_d);
+
             avg_distance = (additionOfDistances/number_of_buses);
             avg_time_diff = additionOfDelays/size;
             bus_count = number_of_buses_currently;
@@ -560,34 +606,33 @@ public class APIController {
             }
 
         } catch (ArithmeticException e) {
+            //e.printStackTrace();
             System.out.println("[!] Veuillez relancer le collecteur !");
-                return null;
+            return null;
         }
 
         String debug = "avg_distance = " + avg_distance + " / avg_time_diff = " + avg_time_diff + " / bus_count = " + bus_count + " / lengthOfLine = " + lengthOfLine + " / day_d = " + day_d;
-        //System.out.println(debug);
 
         HttpAPIRequests httpAPIRequests = new HttpAPIRequests();
         String reponse = httpAPIRequests.requestToAIAPIforFlowSimulation(line, sens, avg_distance, avg_time_diff, number_of_buses, lengthOfLine, day_index_for_ai);
-        //System.out.println("REPOOOOONSE DE AIIII : " + reponse);
 
-         System.out.println("[DEBUG] API Response  : " + reponse);
+        System.out.println("[DEBUG] API Response  : " + reponse);
 
-         if(reponse.charAt(0) == '{') {
-             JSONObject api_response = new JSONObject(reponse);
-             HashMap<String, Double> filling_level_and_proba = new HashMap<>();
+        if(reponse.charAt(0) == '{') {
+            JSONObject api_response = new JSONObject(reponse);
+            HashMap<String, Double> filling_level_and_proba = new HashMap<>();
 
-             for(String key : api_response.keySet()) {
-                 System.out.println("key: " + key);
-                 System.out.println("value : " + api_response.getDouble(key));
-                 BigDecimal bdValue = (BigDecimal) api_response.get(key);
-                 double doubleValue = bdValue.doubleValue();
-                 filling_level_and_proba.put(key, doubleValue);
-             }
-             return filling_level_and_proba;
-         }
+            for(String key : api_response.keySet()) {
+                System.out.println("key: " + key);
+                System.out.println("value : " + api_response.getDouble(key));
+                BigDecimal bdValue = (BigDecimal) api_response.get(key);
+                double doubleValue = bdValue.doubleValue();
+                filling_level_and_proba.put(key, doubleValue);
+            }
+            return filling_level_and_proba;
+        }
 
-         return null;
-     }
+        return null;
+    }
 
 }

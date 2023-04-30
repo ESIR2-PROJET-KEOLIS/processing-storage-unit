@@ -206,94 +206,95 @@ public class OptimisationAndFormating {
 
         String res = "[\n";
 
-            for(int i = 0 ; i < input_tab.size() ; i++) {
+        for(int i = 0 ; i < input_tab.size() ; i++) {
 
-                res += "\t{";
-                res += "\t\t\"id\" : " + i + ",\n";
+            res += "\t{";
+            res += "\t\t\"id\" : " + i + ",\n";
 
-                int index_of_nearest = 0;
-                int index_of_nearest_opti = 0;
+            int index_of_nearest = 0;
+            int index_of_nearest_opti = 0;
 
-                String jsonArrayString = input_tab.get(i).get(3);
-                Gson gson = new Gson();
-                Type listType = new TypeToken<ArrayList<ArrayList<Double>>>(){}.getType();
-                ArrayList<ArrayList<Double>> initial_path = gson.fromJson(jsonArrayString, listType);
-                CopyOnWriteArrayList OPTIMISED_PATH = FormatingAndInversing(jsonArrayString);
-                int N = initial_path.size();
-                //System.out.println(arrayList);
+            String jsonArrayString = input_tab.get(i).get(3);
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<ArrayList<Double>>>(){}.getType();
+            ArrayList<ArrayList<Double>> initial_path = gson.fromJson(jsonArrayString, listType);
+            CopyOnWriteArrayList OPTIMISED_PATH = FormatingAndInversing(jsonArrayString);
+            int N = initial_path.size();
+            //System.out.println(arrayList);
 
-                String[] start_f = input_tab.get(i).get(1).split(":");
-                String[] end_f = input_tab.get(i).get(2).split(":");
-                String direction_id = input_tab.get(i).get(12);
-                res += "\t\t\"sens\" : " + direction_id + ",\n";
-                //res +=
+            String[] start_f = input_tab.get(i).get(1).split(":");
+            String[] end_f = input_tab.get(i).get(2).split(":");
+            String direction_id = input_tab.get(i).get(12);
+            res += "\t\t\"sens\" : " + direction_id + ",\n";
+            //res +=
 
-                LocalTime start = LocalTime.of(Integer.parseInt(start_f[0]), Integer.parseInt(start_f[1]), Integer.parseInt(start_f[2]));
-                LocalTime end = LocalTime.of(Integer.parseInt(end_f[0]), Integer.parseInt(end_f[1]), Integer.parseInt(end_f[2]));
-                List<LocalTime> timestamps = generateTimestamps(start, end, N);
-                List<LocalTime> timestamps_opti = generateTimestamps(start, end, N);
+            LocalTime start = LocalTime.of(Integer.parseInt(start_f[0]), Integer.parseInt(start_f[1]), Integer.parseInt(start_f[2]));
+            LocalTime end = LocalTime.of(Integer.parseInt(end_f[0]), Integer.parseInt(end_f[1]), Integer.parseInt(end_f[2]));
+            List<LocalTime> timestamps = generateTimestamps(start, end, N);
+            List<LocalTime> timestamps_opti = generateTimestamps(start, end, N);
 
                 /*
                 System.out.println("SIZE OF INIT PATH: " + initial_path.size());
                 System.out.println("SIZE OF TIMESTAMPS: " + timestamps.size());
                 */
 
-                LocalTime targetTime = LocalTime.parse(target);
+            LocalTime targetTime = LocalTime.parse(target);
 
-                LocalTime closestTime = null;
-                LocalTime closestTime_opti = null;
-                int closestDiff = Integer.MAX_VALUE;
-                int closestDiff_opti = Integer.MAX_VALUE;
+            LocalTime closestTime = null;
+            LocalTime closestTime_opti = null;
+            int closestDiff = Integer.MAX_VALUE;
+            int closestDiff_opti = Integer.MAX_VALUE;
 
-                for (LocalTime time : timestamps) {
+            for (LocalTime time : timestamps) {
 
-                    int diff = Math.abs(targetTime.toSecondOfDay() - time.toSecondOfDay());
+                int diff = Math.abs(targetTime.toSecondOfDay() - time.toSecondOfDay());
 
-                    if (closestTime == null || diff < closestDiff) {
-                        closestTime = time;
-                        closestDiff = diff;
-                    }
+                if (closestTime == null || diff < closestDiff) {
+                    closestTime = time;
+                    closestDiff = diff;
                 }
-
-                for (LocalTime time : timestamps_opti) {
-
-                    int diff = Math.abs(targetTime.toSecondOfDay() - time.toSecondOfDay());
-
-                    if (closestTime_opti == null || diff < closestDiff_opti) {
-                        closestTime_opti = time;
-                        closestDiff_opti = diff;
-                    }
-                }
-
-                index_of_nearest = timestamps.indexOf(closestTime);
-                index_of_nearest_opti = timestamps_opti.indexOf(closestTime_opti);
-                //System.out.println("LA COOORD : " + initial_path.get(index_of_nearest));
-                res += "\t\t\"position\" : " + initial_path.get(index_of_nearest).toString() + ",\n";
-                //res += "\t\t\"position_opti\" : [" + OPTIMISED_PATH.get(index_of_nearest_opti).toString() + "],\n";
-                //res += "\t\t\"index_in_opti\" : " + index_of_nearest_opti + ",\n";
-
-                //System.out.println("TEST: " + initial_path.get(index_of_nearest).toString());
-
-                String r = initial_path.get(index_of_nearest).toString().substring(1, initial_path.get(index_of_nearest).toString().length()-1);
-                String[] reverse = r.split(",");
-
-
-                // !! getOutput() se charge de l'optimisation !!
-                res += "\t\t\"next_index_opti\" : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]").split(";")[1];
-
-                //System.out.println("GetOutput renvoie le résultat suivant : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]"));
-
-                if(i != input_tab.size()-1) {
-                    res += "\t},\n";
-                } else {
-                    res += "\t}\n";
-                }
-
             }
 
-            res += "]";
+            for (LocalTime time : timestamps_opti) {
 
-            return res;
+                int diff = Math.abs(targetTime.toSecondOfDay() - time.toSecondOfDay());
+
+                if (closestTime_opti == null || diff < closestDiff_opti) {
+                    closestTime_opti = time;
+                    closestDiff_opti = diff;
+                }
+            }
+
+            index_of_nearest = timestamps.indexOf(closestTime);
+            index_of_nearest_opti = timestamps_opti.indexOf(closestTime_opti);
+            //System.out.println("LA COOORD : " + initial_path.get(index_of_nearest));
+            res += "\t\t\"position\" : " + initial_path.get(index_of_nearest).toString() + ",\n";
+            //res += "\t\t\"position_opti\" : [" + OPTIMISED_PATH.get(index_of_nearest_opti).toString() + "],\n";
+            //res += "\t\t\"index_in_opti\" : " + index_of_nearest_opti + ",\n";
+
+            //System.out.println("TEST: " + initial_path.get(index_of_nearest).toString());
+
+            String r = initial_path.get(index_of_nearest).toString().substring(1, initial_path.get(index_of_nearest).toString().length()-1);
+            String[] reverse = r.split(",");
+
+
+            // !! getOutput() se charge de l'optimisation !!
+            res += "\t\t\"next_index_opti\" : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]").split(";")[1] + ",\n";
+            res += "\t\t\"filling_level\" :  \"N/A\",\n";
+            res += "\t\t\"filling_proba\" :  0.0\n";
+            //System.out.println("GetOutput renvoie le résultat suivant : " + getOutput(jsonArrayString, "[" + reverse[1] + "," + reverse[0] + "]"));
+
+            if(i != input_tab.size()-1) {
+                res += "\t},\n";
+            } else {
+                res += "\t}\n";
+            }
+
+        }
+
+        res += "]";
+
+        return res;
     }
 
     /**
@@ -306,9 +307,9 @@ public class OptimisationAndFormating {
         String result = "{\n";
 
         synchronized (input) {
-        for(ArrayList<String> val : input) {
-            synchronized (val) {
-                for(int i = 0 ; i < val.size() ; i++) {
+            for(ArrayList<String> val : input) {
+                synchronized (val) {
+                    for(int i = 0 ; i < val.size() ; i++) {
                         result += """
                             \n
                             \t{
@@ -324,9 +325,9 @@ public class OptimisationAndFormating {
                 }
             }
         }
-    
+
         result += "\n}";
-        
+
         return result;
     }
 
