@@ -154,10 +154,8 @@ public class APIController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-        } else {
-            return "[!] Empty return, can't process theorical positions on API call.";
         }
+        return "[!] Empty return, can't process theorical positions on API call.";
     }
 
     /**
