@@ -117,7 +117,6 @@ public class APIController {
         String ret = "";
         String sql_req = "SELECT DISTINCT * FROM simulation_en_toute_heure WHERE route_short_name = '" + line + "' AND " + day  + " = '1' AND TIME(' " + hour + "') BETWEEN min_departure_time AND max_arrival_time;\n";
         String theorical_location = "";
-        //System.out.println(sql_req);
 
         ArrayList<ArrayList<String>> val = databaseBinding.requestFetchNColumns(sql_req);
         if(val.size() != 0) {
@@ -139,17 +138,18 @@ public class APIController {
                                         filling_level = entry.getKey();
                                     }
                                 }
+                                jsonObject.put("filling_level", filling_level);
+                                jsonObject.put("filling_proba", filling_proba);
+                                FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
+                                String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
+                                System.out.println("---------------------- DEBUG ---------------------- ");
+                                System.out.println("Returned theorical position : " + to_return);
+                                System.out.println("--------------------------------------------------- ");
+                                return to_return;
                             }
                         }
-                        jsonObject.put("filling_level", filling_level);
-                        jsonObject.put("filling_proba", filling_proba);
-                        FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
                     }
-                    String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
-                    System.out.println("---------------------- DEBUG ---------------------- ");
-                    System.out.println("Returned theorical position : " + to_return);
-                    System.out.println("--------------------------------------------------- ");
-                    return to_return;
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
