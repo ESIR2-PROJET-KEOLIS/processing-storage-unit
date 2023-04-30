@@ -155,6 +155,9 @@ public class APIController {
         }
 
         String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
+        System.out.println("---------------------- DEBUG ---------------------- ");
+        System.out.println("Returned theorical position : " + to_return);
+        System.out.println("--------------------------------------------------- ");
         return to_return;
     }
 
