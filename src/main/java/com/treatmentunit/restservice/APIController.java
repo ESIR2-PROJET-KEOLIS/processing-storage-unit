@@ -147,6 +147,8 @@ public class APIController {
                                 System.out.println("--------------------------------------------------- ");
                                 return to_return;
                             }
+                        } else {
+                            return theorical_location;
                         }
                     }
 
