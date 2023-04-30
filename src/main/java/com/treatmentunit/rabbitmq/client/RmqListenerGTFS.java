@@ -143,9 +143,15 @@ public class RmqListenerGTFS extends RmqListener implements Runnable{
                                     }
                                 }
                             }
+
                             databaseBinding.requestInsert("CREATE TABLE simulation_en_toute_heure AS SELECT * FROM (SELECT t.trip_id, min_departure_time, max_arrival_time, pg.tab_coordonnes, r.route_short_name, monday, tuesday, wednesday, thursday, friday, saturday, sunday, t.direction_id FROM (SELECT trip_id, MIN(departure_time) AS min_departure_time, MAX(arrival_time) AS max_arrival_time FROM stop_times GROUP BY trip_id) as custom, trips t, calendar c, routes r, parcours_geo pg WHERE custom.trip_id = t.trip_id AND t.service_id = c.service_id AND t.route_id = r.route_id AND c.service_id = t.service_id AND shape_id = pg.parcours_lignes_bus_star_id) as cus;");
+
+                            // Indexes creation on newly created table
+                            databaseBinding.requestInsert("CREATE INDEX idx_trip_id ON stop_times (trip_id); CREATE INDEX idx_departure_time2 ON stop_times (departure_time(255)); CREATE INDEX idx_arrival_time2 ON stop_times (arrival_time(255)); CREATE INDEX idx_service_id2 ON trips (service_id); CREATE INDEX idx_route_id2 ON trips (route_id); CREATE INDEX idx_shape_id2 ON trips (shape_id);");
+
                             System.out.println("[*] Base de données remplie avec succès ! ");
                             isBusy = false;
+
                         } else {
                             System.out.println("[!] Dossier " + FILE_NAME_DEZIP + " vide !");
                         }
