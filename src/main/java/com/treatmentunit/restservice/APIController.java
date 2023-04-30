@@ -131,7 +131,6 @@ public class APIController {
                         if(jsonObject.getInt("sens") == 0 && line.equals("C1")) {
                             HashMap<String, Double> fillingPredictions = getSimulationFlow(line, String.valueOf(Integer.valueOf(jsonObject.getInt("sens"))), day, hour, theorical_location);
                             if(fillingPredictions != null) {
-                                //System.out.println("[DEBUG] Not null & size = " + fillingPredictions.size());
                                 for (Map.Entry<String, Double> entry : fillingPredictions.entrySet()) {
                                     if (entry.getValue() > filling_proba) {
                                         filling_proba = entry.getValue();
@@ -141,16 +140,16 @@ public class APIController {
                                 jsonObject.put("filling_level", filling_level);
                                 jsonObject.put("filling_proba", filling_proba);
                                 FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
-                                String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
-                                System.out.println("---------------------- DEBUG ---------------------- ");
-                                System.out.println("Returned theorical position : " + to_return);
-                                System.out.println("--------------------------------------------------- ");
-                                return to_return;
                             }
                         } else {
                             return theorical_location;
                         }
                     }
+                    String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
+                    System.out.println("---------------------- DEBUG ---------------------- ");
+                    System.out.println("Returned theorical position : " + to_return);
+                    System.out.println("--------------------------------------------------- ");
+                    return to_return;
 
 
                 } catch (IOException e) {
