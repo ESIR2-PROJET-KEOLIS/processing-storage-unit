@@ -145,6 +145,11 @@ public class APIController {
                         jsonObject.put("filling_proba", filling_proba);
                         FormatedTheoricalPositionWithPredictedFilling.add(jsonObject);
                     }
+                    String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
+                    System.out.println("---------------------- DEBUG ---------------------- ");
+                    System.out.println("Returned theorical position : " + to_return);
+                    System.out.println("--------------------------------------------------- ");
+                    return to_return;
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -153,12 +158,6 @@ public class APIController {
         } else {
             return "[!] Empty return, can't process theorical positions on API call.";
         }
-
-        String to_return = new JSONArray(FormatedTheoricalPositionWithPredictedFilling).toString();
-        System.out.println("---------------------- DEBUG ---------------------- ");
-        System.out.println("Returned theorical position : " + to_return);
-        System.out.println("--------------------------------------------------- ");
-        return to_return;
     }
 
     /**
